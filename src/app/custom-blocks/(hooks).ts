@@ -569,6 +569,7 @@ export const useGenerateCustomBlockPreview = () => {
     }
     body {
       background-color: white;
+      overflow: hidden;
     }
     ${css}
     

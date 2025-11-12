@@ -652,7 +652,7 @@ export const CustomBlockPage = ({
                       height="100%"
                       language="javascript"
                       theme="vs-dark"
-                      value={state.data}
+                      value={state.data || ""}
                       options={{ minimap: { enabled: false } }}
                       onMount={htmlEditorDidMount}
                       onChange={(value) => {
@@ -680,7 +680,7 @@ export const CustomBlockPage = ({
                       height="100%"
                       language="javascript"
                       theme="vs-dark"
-                      value={state.translations}
+                      value={state.translations || ""}
                       options={{ minimap: { enabled: false } }}
                       onMount={htmlEditorDidMount}
                       onChange={(value) => {

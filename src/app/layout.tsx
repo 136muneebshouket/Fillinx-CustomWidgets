@@ -35,7 +35,8 @@ export default function RootLayout({
     <html lang="en">
       <body
         // Use Nunito globally
-        className={`${nunito.className} ${inter.className} ${jetbrainsMono.className} ${montserrat.className} antialiased`}
+        // className={`${nunito.className} ${inter.className} ${jetbrainsMono.className} ${montserrat.className} antialiased`}
+        className={` ${inter.className} antialiased`}
       >
         <RootProvider>{children}</RootProvider>
       </body>
