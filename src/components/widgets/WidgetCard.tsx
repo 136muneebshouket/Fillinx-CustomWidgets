@@ -36,6 +36,8 @@ interface widgetCardProps {
   refetchWidgets?: () => void;
 }
 
+
+
 export function WidgetCard({
   widget,
   viewMode,
