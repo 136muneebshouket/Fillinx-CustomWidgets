@@ -141,7 +141,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black w-full">
       <div className="w-full">
-        <div className="sticky bg-black top-0  w-full  border-b border-slate-800">
+        <div className="sticky z-30 bg-black top-0  w-full  border-b border-slate-800">
           <div className="flex items-center justify-between p-2 mx-auto w-full md:w-[80%] ">
             <h1 className="text-4xl font-bold text-white  flex-1">
               Custom Blocks

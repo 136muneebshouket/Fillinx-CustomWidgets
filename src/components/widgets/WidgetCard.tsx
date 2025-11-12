@@ -31,6 +31,9 @@ interface widgetCardProps {
     height: number;
     created_at: string;
     status: boolean;
+    generated_html: any;
+    data:any;
+    translations:any
   };
   viewMode: "grid" | "list";
   refetchWidgets?: () => void;
@@ -69,8 +72,7 @@ export function WidgetCard({
   const handleDeleteWidget = async (widget) => {
     // console.log(widget?.id);
 
-    if(window.confirm("Do you really want to delete thsi widget ??")){
-
+    if (window.confirm("Do you really want to delete thsi widget ??")) {
       try {
         // const response = await delete_api_template({
         //   url: TapdayApiPaths?.customWidgets.deleteById(widget?.id),
@@ -91,12 +93,19 @@ export function WidgetCard({
       } finally {
         // setdeletingBlock(false);
       }
-
     }
-
   };
 
-  const viewWidget = (widget, e) => { const target = e?.target as HTMLElement | null; if (target && (target.closest('[aria-haspopup="menu"]') || target.closest('[role="menu"]') || target.closest('[role="menuitem"]'))) { return; }
+  const viewWidget = (widget, e) => {
+    const target = e?.target as HTMLElement | null;
+    if (
+      target &&
+      (target.closest('[aria-haspopup="menu"]') ||
+        target.closest('[role="menu"]') ||
+        target.closest('[role="menuitem"]'))
+    ) {
+      return;
+    }
     // console.log(e.target);
     router.push(`/custom-blocks?selected-block=${widget.id}`);
   };
@@ -106,7 +115,8 @@ export function WidgetCard({
       <div className="flex gap-6 p-6 bg-gray-900 rounded-lg border border-gray-800 hover:border-gray-700 transition-all">
         <div className="flex-shrink-0 w-64 h-48 overflow-hidden rounded-lg bg-gray-950 border border-gray-800">
           <iframe
-            srcDoc={widget.html_content}
+            id="widgetcardiframe"
+            srcDoc={widget.generated_html}
             title={`widget ${widget.id}`}
             className="w-full h-full border-0"
             sandbox="allow-scripts"
@@ -114,10 +124,17 @@ export function WidgetCard({
         </div>
 
         <div className="flex-1 flex flex-col justify-between">
-          <div className="cursor-pointer" onClick={(e)=>{viewWidget(widget , e)}}>
+          <div
+            className="cursor-pointer"
+            onClick={(e) => {
+              viewWidget(widget, e);
+            }}
+          >
             <div className="flex items-start justify-between gap-4 mb-3">
-              <div >
-                <h3  className="mb-2 text-gray-100">{widget.title || "no title"}</h3>
+              <div>
+                <h3 className="mb-2 text-gray-100">
+                  {widget.title || "no title"}
+                </h3>
                 <div className="flex items-center gap-4 text-sm text-gray-400">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
@@ -131,7 +148,6 @@ export function WidgetCard({
                   <Activity className="w-3 h-3 mr-1" />
                   {widget.status}
                 </Badge>
-
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -190,10 +206,16 @@ export function WidgetCard({
 
   // Grid view
   return (
-    <div  onClick={(e)=>{viewWidget(widget , e)}} className="flex flex-col bg-gray-900 rounded-lg border border-gray-800 overflow-hidden hover:border-gray-700 transition-all cursor-pointer">
+    <div
+      onClick={(e) => {
+        viewWidget(widget, e);
+      }}
+      className="flex flex-col bg-gray-900 rounded-lg border border-gray-800 overflow-hidden hover:border-gray-700 transition-all cursor-pointer"
+    >
       <div className="relative aspect-video bg-gray-950 overflow-hidden border-b border-gray-800">
         <iframe
-          srcDoc={widget.html_content}
+          id="widgetcardiframe"
+          srcDoc={widget.generated_html}
           title={`widget ${widget.id}`}
           className="w-full h-full border-0"
           sandbox="allow-scripts"
