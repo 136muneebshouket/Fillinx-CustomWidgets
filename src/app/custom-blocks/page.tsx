@@ -6,6 +6,7 @@ import { defaultCustomBlockItem } from "./recoil";
 import { baseUrl } from "../utils/use-fetch";
 import { get_api_template } from "@/lib/API/ApiTemplates";
 import { TapdayApiPaths } from "@/lib/APIPaths/GlobalApiPaths";
+import { Loader } from "lucide-react";
 
 const defaultData = {
   blocks: [
@@ -63,6 +64,8 @@ const CustomBlock = () => {
               head: widget.head || defaultCustomBlockItem.head,
               generatedHtml: widget.generated_html || widget.html_content || "",
               height: widget.height || defaultCustomBlockItem.height,
+              data : JSON.stringify(widget.data) || defaultCustomBlockItem.data,
+              translations : JSON.stringify(widget.translations) || defaultCustomBlockItem.translations
             })),
           });
         }
@@ -78,7 +81,13 @@ const CustomBlock = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading custom widgets...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="w-8 h-8 animate-spin text-white" />
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -90,7 +99,7 @@ const CustomBlock = () => {
   return (
     <>
       <CustomBlocksRecoilProvider data={data}>
-        <BlockRenderer />  
+        <BlockRenderer />
       </CustomBlocksRecoilProvider>
     </>
   );
