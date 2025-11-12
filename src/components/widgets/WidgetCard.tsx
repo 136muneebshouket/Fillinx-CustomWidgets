@@ -32,6 +32,8 @@ interface widgetCardProps {
     created_at: string;
     status: boolean;
     generated_html: any;
+    data:any;
+    translations:any
   };
   viewMode: "grid" | "list";
   refetchWidgets?: () => void;
