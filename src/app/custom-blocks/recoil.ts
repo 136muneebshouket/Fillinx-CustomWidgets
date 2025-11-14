@@ -45,5 +45,6 @@ export const defaultCustomBlockItem: CustomBlockType = {
   generatedHtml: "",
   head: "",
   data:"",
-  translations:""
+  translations:"",
+  tagStyles : ""
 };

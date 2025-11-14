@@ -6,6 +6,7 @@ import {
   Edit,
   Trash2,
   Copy,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "fillinxsolutions-provider";
 import { Badge } from "../ui/badge";
@@ -19,6 +20,8 @@ import {
 } from "../ui/dropdown-menu";
 import { useDeleteCustomBlock } from "@/app/custom-blocks/(hooks)";
 import { useRouter } from "next/navigation";
+import { useSWRConfig } from "swr";
+import { getallWidgets_swrKey } from "@/lib/API/SWR-RevalidationKeys";
 
 interface widgetCardProps {
   widget: {
@@ -32,20 +35,20 @@ interface widgetCardProps {
     created_at: string;
     status: boolean;
     generated_html: any;
-    data:any;
-    translations:any
+    data: any;
+    translations: any;
+    tagStyles?: any;
   };
   viewMode: "grid" | "list";
   refetchWidgets?: () => void;
 }
-
-
 
 export function WidgetCard({
   widget,
   viewMode,
   refetchWidgets = () => {},
 }: widgetCardProps) {
+  const { mutate } = useSWRConfig();
   const router = useRouter();
   const { handleDeleteBlock } = useDeleteCustomBlock();
   const formatDate = (dateString: string) => {
@@ -82,7 +85,8 @@ export function WidgetCard({
         // router.push('/');
         await handleDeleteBlock(widget.id);
         // router.refresh();
-        await refetchWidgets();
+        // await refetchWidgets();
+        mutate(getallWidgets_swrKey);
         toast.success("widget deleted successfully", {
           position: "top-right",
         });
@@ -108,6 +112,11 @@ export function WidgetCard({
     }
     // console.log(e.target);
     router.push(`/custom-blocks?selected-block=${widget.id}`);
+    // router.push(`/widget/${widget.id}`);
+  };
+
+  const editWidget = () => {
+    router.push(`/custom-blocks?selected-block=${widget.id}`);
   };
 
   if (viewMode === "list") {
@@ -132,9 +141,12 @@ export function WidgetCard({
           >
             <div className="flex items-start justify-between gap-4 mb-3">
               <div>
-                <h3 className="mb-2 text-gray-100">
-                  {widget.title || "no title"}
-                </h3>
+                <div className="flex gap-3 items-center mb-2">
+                  <h3 className=" text-gray-100">
+                    {widget.title || "no title"}
+                  </h3>
+                  <ExternalLink className="text-white" />
+                </div>
                 <div className="flex items-center gap-4 text-sm text-gray-400">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
@@ -171,9 +183,14 @@ export function WidgetCard({
                       <Edit className="w-4 h-4 mr-2" />
                       Edit
                     </DropdownMenuItem> */}
-                    <DropdownMenuItem className="text-gray-300 focus:bg-gray-800 focus:text-gray-100">
-                      <Copy className="w-4 h-4 mr-2" />
-                      Duplicate
+                    <DropdownMenuItem
+                      onClick={() => {
+                        editWidget();
+                      }}
+                      className="text-gray-300 focus:bg-gray-800 focus:text-gray-100"
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-gray-800" />
                     <DropdownMenuItem
@@ -231,7 +248,10 @@ export function WidgetCard({
 
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-gray-100">{widget.title || "no title"}</h3>
+          <div className="flex gap-3 items-center mb-2">
+            <h3 className=" text-gray-100">{widget.title || "no title"}</h3>
+            <ExternalLink className="text-white" />
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -254,9 +274,14 @@ export function WidgetCard({
                 <Edit className="w-4 h-4 mr-2" />
                 Edit
               </DropdownMenuItem> */}
-              <DropdownMenuItem className="text-gray-300 focus:bg-gray-800 focus:text-gray-100">
-                <Copy className="w-4 h-4 mr-2" />
-                Duplicate
+              <DropdownMenuItem
+                onClick={() => {
+                  editWidget();
+                }}
+                className="text-gray-300 focus:bg-gray-800 focus:text-gray-100"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-gray-800" />
               <DropdownMenuItem

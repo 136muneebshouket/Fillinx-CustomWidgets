@@ -65,7 +65,8 @@ const CustomBlock = () => {
               generatedHtml: widget.generated_html || widget.html_content || "",
               height: widget.height || defaultCustomBlockItem.height,
               data : JSON.stringify(widget.data) || defaultCustomBlockItem.data,
-              translations : JSON.stringify(widget.translations) || defaultCustomBlockItem.translations
+              translations : JSON.stringify(widget.translations) || defaultCustomBlockItem.translations,
+              tagStyles : JSON.stringify(widget.tagStyles) || defaultCustomBlockItem.tagStyles
             })),
           });
         }

@@ -7,6 +7,8 @@ import { WidgetCard } from "./WidgetCard";
 import { useRouter } from "next/navigation";
 import { get_api_template } from "@/lib/API/ApiTemplates";
 import { TapdayApiPaths } from "@/lib/APIPaths/GlobalApiPaths";
+import useSWR from "swr";
+import { getallWidgets_swrKey } from "@/lib/API/SWR-RevalidationKeys";
 
 interface Widget {
   id: string;
@@ -21,12 +23,14 @@ interface Widget {
   status: boolean;
   data: any;
   translations: any;
+  tagStyles?: any;
 }
 
 export default function ListWidgets() {
-  const [widgets, setWidgets] = useState<Widget[]>([]);
+  // const [widgets, setWidgets] = useState<Widget[]>([]);
+  let widgets: Widget[] = [];
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
@@ -55,22 +59,29 @@ export default function ListWidgets() {
       //   setWidgets(responseData.data?.data || []);
       // }
 
-      if ((response as any)?.data) {
-        setWidgets((response as any)?.data?.data ?? []);
-      }
+      return response;
+
+      // if ((response as any)?.data) {
+      //   setWidgets((response as any)?.data?.data ?? []);
+      // }
     } catch (err) {
       console.error("Error fetching widgets:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch data");
+      // setError(err instanceof Error ? err.message : "Failed to fetch data");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchWidgets();
-  }, []);
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    getallWidgets_swrKey,
+    fetchWidgets
+  );
 
-  if (loading) {
+  // useEffect(() => {
+  //   fetchWidgets();
+  // }, []);
+
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
         <div className="flex flex-col items-center gap-4">
@@ -84,9 +95,14 @@ export default function ListWidgets() {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="text-red-500">Error: {error}</div>
+        <div className="text-red-500">Error: {error?.message}</div>
       </div>
     );
+  }
+
+  if (data) {
+    widgets = (data as any)?.data?.data;
+    // setWidgets((data as any)?.data?.data);
   }
 
   // console.log(widgets)

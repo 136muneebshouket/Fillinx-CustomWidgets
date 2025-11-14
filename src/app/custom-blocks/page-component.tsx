@@ -43,6 +43,9 @@ import { cn } from "@/lib/utils";
 import TapDayLogo from "@/components/SVGS/TapDayLogo";
 import { upload_api_template_fn } from "@/lib/API/ApiTemplates";
 import { TapdayApiPaths } from "@/lib/APIPaths/GlobalApiPaths";
+import { getallWidgets_swrKey } from "@/lib/API/SWR-RevalidationKeys";
+import { useSWRConfig } from "swr";
+import { SelectShopForWidget } from "./(components)/ShopSelection/SelectShopForWidget";
 // import { CloseBlockPageButton } from './(components)/close-block-page-button'
 
 interface Props {
@@ -65,6 +68,7 @@ export const CustomBlockPage = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { setState, handleSaveBlocks } = useCustomBlockState();
   const { handleDeleteBlock } = useDeleteCustomBlock();
+  const { mutate } = useSWRConfig();
   let state = creatingNewBlock ? newBlock : selectedBlock;
   // console.log(state)
   // const [openCollectionModal, setopenCollectionModal] = useState(false);
@@ -117,8 +121,13 @@ export const CustomBlockPage = ({
   const handleSaveBlock = useCallback(async () => {
     // setIsSave((prev) => ({ ...prev, isSaved: false }))
 
-    // console.log(JSON.stringify(state));
+    let bodyHeight =
+      iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
+
+    // console.log(state, bodyHeight);
     // return;
+
+    mutate(getallWidgets_swrKey);
 
     if (creatingNewBlock) {
       let bodyObj = {
@@ -134,9 +143,10 @@ export const CustomBlockPage = ({
         css_content: state.css,
         js_content: state.js,
         head: state.head,
-        height: state.height.toString(),
+        height: bodyHeight?.toString() || "",
         data: state.data || "",
         translations: state.translations || "",
+        tagStyles: state.tagStyles || "",
       };
 
       try {
@@ -167,8 +177,8 @@ export const CustomBlockPage = ({
     // return
     try {
       setsaving(true);
-      const bodyHeight =
-        iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
+      // const bodyHeight =
+      //   iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
 
       await handleSaveBlocks({
         height: bodyHeight,
@@ -208,6 +218,7 @@ export const CustomBlockPage = ({
 
   const deleteBlock = useCallback(async () => {
     try {
+      mutate(getallWidgets_swrKey);
       setdeletingBlock(true);
       // Navigate first to prevent rendering with undefined block
       router.push("/");
@@ -318,6 +329,18 @@ export const CustomBlockPage = ({
     }
 
     // return val
+  };
+
+  const handleTagChange = (newTag: string) => {
+    console.log(newTag);
+    // toast.info(`Environment changed to: ${newTag}`)
+  };
+
+  const handleShopsChange = (selectedShops) => {
+    console.log(selectedShops);
+    // setShops(selectedShops)
+    // if (selectedShops.length > 0) {
+    //   toast.success(`${selectedShops.length} shop(s) selected`)
   };
 
   return (
@@ -505,20 +528,26 @@ export const CustomBlockPage = ({
                   </div>
                 </div>
                 <div className="px-2.5">
-                  <div className="mb-2">
+                  <div className="mb-2 flex justify-between items-center">
                     <Header
                       selectedBlock={state}
                       onChangeBlockTitle={(title) => {
                         handleTitleChange(title);
                       }}
                     />
+                    <div className="w-[300px]">
+                      <SelectShopForWidget
+                        onTagChange={handleTagChange}
+                        onShopsChange={handleShopsChange}
+                      />
+                    </div>
                   </div>
                   <CustomTabs
                     ref={undefined}
                     outerClassName="w-full flex justify-start bg-black border border-[#1E1E1E] rounded-md mt-0"
-                    activeTabClassName={cn("bg-black")}
+                    activeTabClassName={cn("bg-white")}
                     motionClassName="bg-white !shrink-0 z-10"
-                    textClassName="text-dark z-10"
+                    textClassName="text-white z-10"
                     tabValues={[
                       { label: "HTML", value: "html", link: "" },
                       { label: "CSS", value: "css", link: "" },
@@ -528,6 +557,11 @@ export const CustomBlockPage = ({
                       {
                         label: "TRANSLATIONS",
                         value: "translations",
+                        link: "",
+                      },
+                      {
+                        label: "TAGSTYLES",
+                        value: "tagstyles",
                         link: "",
                       },
                     ]}
@@ -701,10 +735,38 @@ export const CustomBlockPage = ({
                       }}
                     />
                   )}
+
+                  {selectedTab === CustomBlockTabsEnums.TAGSTYLES && (
+                    <MonacoEditor
+                      className="h-full"
+                      height="100%"
+                      language="javascript"
+                      theme="vs-dark"
+                      value={state.tagStyles || ""}
+                      options={{ minimap: { enabled: false } }}
+                      onMount={htmlEditorDidMount}
+                      onChange={(value) => {
+                        // handleUpdate();
+                        // setState((prev) => ({
+                        //   ...prev,
+                        //   blocks: prev.blocks.map((block) => {
+                        //     if (block.id === state.id) {
+                        //       return {
+                        //         ...block,
+                        //         js: value || "",
+                        //       };
+                        //     }
+                        //     return block;
+                        //   }),
+                        // }));
+                        handleChangeMonaco(value, "tagstyles");
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </ResizablePanel>
-            <ResizableHandle />
+            <ResizableHandle withHandle />
 
             <ResizablePanel defaultSize={30}>
               {/* preview */}

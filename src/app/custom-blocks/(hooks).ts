@@ -94,7 +94,8 @@ export const useCustomBlockState = () => {
             head: blockToSave.head,
             height: blockToSave.height.toString(),
             data: blockToSave.data || "",
-            translations : blockToSave.translations || "",
+            translations: blockToSave.translations || "",
+            tagStyles : blockToSave.tagStyles || ""
           }),
         }
       );

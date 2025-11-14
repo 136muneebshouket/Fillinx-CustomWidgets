@@ -29,6 +29,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next.config.js"
-  ],
+, "src/app/api/shops/search"  ],
   "exclude": ["node_modules"]
 }

@@ -51,14 +51,14 @@ const CustomTabs = React.forwardRef<HTMLDivElement, Tabsprops>(
                   value={tab.value}
                   id={id}
                   className={cn(
-                    "relative p-0 flex justify-center items-center h-10 w-[120px] m-0",
+                    `relative p-0 flex  justify-center items-center h-10 w-[120px] m-0 ${active == tab.value ? 'bg-[#171717]' : ""}`,
                     // activeTabClassName
                   )}
                   onClick={() => onClick(tab.value)}
                 >
                   {" "}
-                  <AnimatePresence>
-                    {active === tab.value ? (
+                  {/* <AnimatePresence> */}
+                    {/* {active === tab.value ? (
                       <motion.div
                         className={cn(
                           "underline w-full absolute inset-0 text-xs font-medium rounded-sm ",
@@ -66,11 +66,11 @@ const CustomTabs = React.forwardRef<HTMLDivElement, Tabsprops>(
                         )}
                         layoutId={id}
                       />
-                    ) : null}
-                  </AnimatePresence>
+                    ) : null} */}
+                  {/* </AnimatePresence> */}
                   <span
                     className={cn(
-                      "z-10 flex justify-center mx-auto text-xs",
+                      "z-10 flex justify-center mx-auto text-xs ",
                       {
                         "text-primary font-semibold": active === tab.value,
                         "text-secondary-dark font-medium": active !== tab.value,

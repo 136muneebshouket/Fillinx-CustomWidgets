@@ -17,7 +17,7 @@ const Header = ({
 }) => {
   const { handleUpdate } = useSaveButtons();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [editingText, seteditingText] = useState("");
+  const [editingText, seteditingText] = useState(()=> selectedBlock?.title || 'Custom Block Title');
   const [isEditing, setisEditing] = useState(false);
   const { setState } = useCustomBlockState();
 
@@ -42,7 +42,7 @@ const Header = ({
       // }));
       onChangeBlockTitle(editingText);
       setisEditing(false);
-      seteditingText("");
+      // seteditingText("");
     
     }
   return (
@@ -89,7 +89,7 @@ const Header = ({
               <Button
                 onClick={() => {
                   setisEditing(false);
-                  seteditingText("");
+                  // seteditingText("");
                 }}
                 variant={"ghost"}
                 className="text-xs"
