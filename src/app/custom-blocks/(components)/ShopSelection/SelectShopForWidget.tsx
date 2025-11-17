@@ -1,17 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SelectTagComponent } from "./SelectTagComponent"
 import { ShopDropdownComponent } from "./ShopDropdownComponent"
 
 export interface SelectShopForWidgetProps {
   onTagChange?: (tag: string) => void
   onShopsChange?: (shops: any) => void
+  defaultShops?: any[]
+  defaultTag?:any
 }
 
-export function SelectShopForWidget({ onTagChange, onShopsChange }: SelectShopForWidgetProps) {
+export function SelectShopForWidget({ onTagChange, onShopsChange , defaultShops , defaultTag }: SelectShopForWidgetProps) {
   const [selectedTag, setSelectedTag] = useState<"global" | "shop">("global")
   const [selectedShops, setSelectedShops] = useState<any[]>([])
+
+  useEffect(() => {
+    if (defaultShops) {
+      setSelectedShops(defaultShops)
+      onShopsChange?.(defaultShops)
+    }
+    if(defaultTag){
+      setSelectedTag(defaultTag)
+      onTagChange?.(defaultTag)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleTagChange = (tag: "global" | "shop") => {
     setSelectedTag(tag)

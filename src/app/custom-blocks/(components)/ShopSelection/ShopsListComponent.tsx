@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader } from "lucide-react";
+import { TapdayApiPaths } from "@/lib/APIPaths/GlobalApiPaths";
+import { get_api_template } from "@/lib/API/ApiTemplates";
+import { da } from "date-fns/locale";
 
 export interface Shop {
   id: string;
@@ -18,9 +21,12 @@ export interface ShopsListComponentProps {
 }
 
 const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Failed to fetch shops");
-  return res.json();
+  const res = await get_api_template({
+    method: "GET",
+    url: url,
+  });
+  // if (!res.ok) throw new Error("Failed to fetch shops");
+  return res as any;
 };
 
 export function ShopsListComponent({
@@ -32,8 +38,10 @@ export function ShopsListComponent({
 
   const { data, isLoading, error } = useSWR(
     searchQuery
-      ? `/api/shops/search?query=${encodeURIComponent(searchQuery)}`
-      : "/api/shops",
+      ? `${TapdayApiPaths.shops.getList()}?search=${encodeURIComponent(
+          searchQuery
+        )}&per_page=10`
+      : TapdayApiPaths.shops.getList() + "?per_page=10",
     fetcher,
     {
       revalidateOnFocus: false,
@@ -42,10 +50,19 @@ export function ShopsListComponent({
   );
 
   useEffect(() => {
-    if (data?.shops) {
-      setFilteredShops(data.shops);
+    let shops = data?.data?.data || [];
+    if (shops) {
+      setFilteredShops(shops);
     }
+
+    // console.log(data?.data?.data);
   }, [data]);
+
+  // useEffect(() => {
+  //   if (selectedShops?.length === 0) return;
+  //   let both = [...selectedShops, ...filteredShops] as [];
+  //   setFilteredShops(both);
+  // }, [selectedShops]);
 
   const handleShopToggle = (shop) => {
     let newShop = { id: shop.id, name: shop.name };
@@ -81,6 +98,7 @@ export function ShopsListComponent({
       </div>
     );
   }
+  
 
   return (
     <div className="space-y-2 p-4 bg-background bg-slate-950">

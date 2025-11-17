@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     env:{
-        VERCEL_ENV : "production"
+        // VERCEL_ENV : "production"
+        VERCEL_ENV : "staging"
     }
 };
 

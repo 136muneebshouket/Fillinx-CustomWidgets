@@ -124,15 +124,17 @@ export const CustomBlockPage = ({
     let bodyHeight =
       iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
 
-    // console.log(state, bodyHeight);
-    // return;
+    console.log(state);
+    return
 
     mutate(getallWidgets_swrKey);
 
     if (creatingNewBlock) {
       let bodyObj = {
-        type: "page",
         title: state.title,
+        type: 'templateBlocks',
+        // shopType:'global', // global , byIds
+        // shops:[1,2,3],
         html_content: state.html,
         generated_html: generatePreview({
           css: state.css,
@@ -144,7 +146,7 @@ export const CustomBlockPage = ({
         js_content: state.js,
         head: state.head,
         height: bodyHeight?.toString() || "",
-        data: state.data || "",
+        data: state.data || "", //  type: 'templateBlocks' this needs to be added otherwise app will break
         translations: state.translations || "",
         tagStyles: state.tagStyles || "",
       };
@@ -293,6 +295,8 @@ export const CustomBlockPage = ({
     }
   };
 
+  
+
   //  function to handle title change of block
   const handleTitleChange = (value) => {
     // console.log(value)
@@ -332,12 +336,21 @@ export const CustomBlockPage = ({
   };
 
   const handleTagChange = (newTag: string) => {
-    console.log(newTag);
+    // console.log(newTag);
+    setNewBlock((prev) => ({
+      ...prev,
+      shopType: newTag || null,
+    }));
     // toast.info(`Environment changed to: ${newTag}`)
   };
 
   const handleShopsChange = (selectedShops) => {
-    console.log(selectedShops);
+    // console.log(selectedShops);
+
+    setNewBlock((prev) => ({
+      ...prev,
+      shops: selectedShops || null,
+    }));
     // setShops(selectedShops)
     // if (selectedShops.length > 0) {
     //   toast.success(`${selectedShops.length} shop(s) selected`)
@@ -539,6 +552,13 @@ export const CustomBlockPage = ({
                       <SelectShopForWidget
                         onTagChange={handleTagChange}
                         onShopsChange={handleShopsChange}
+                        defaultShops={
+                          [
+                            // { id: 377, name: "accuspot" },
+                            // { id: 241, name: "Adaans" },
+                          ]
+                        }
+                        defaultTag={'global'}
                       />
                     </div>
                   </div>
@@ -561,7 +581,7 @@ export const CustomBlockPage = ({
                       },
                       {
                         label: "TAGSTYLES",
-                        value: "tagstyles",
+                        value: "tagStyles",
                         link: "",
                       },
                     ]}
@@ -759,7 +779,7 @@ export const CustomBlockPage = ({
                         //     return block;
                         //   }),
                         // }));
-                        handleChangeMonaco(value, "tagstyles");
+                        handleChangeMonaco(value, "tagStyles");
                       }}
                     />
                   )}

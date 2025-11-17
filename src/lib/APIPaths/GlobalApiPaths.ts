@@ -72,6 +72,15 @@ export const TapdayApiPaths = {
     },
   },
 
+  shops:{
+    BASE: `${TAPDAY_API_BASE_URL}/shops`,
+
+    getList: function () {
+      return this.BASE + '/list';
+    },
+
+  }
+
   // Add other modules here as your API grows:
   // users: { /* ... endpoints */ },
   // analytics: { /* ... endpoints */ },

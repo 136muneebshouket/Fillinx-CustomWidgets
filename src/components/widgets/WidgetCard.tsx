@@ -75,7 +75,7 @@ export function WidgetCard({
   const handleDeleteWidget = async (widget) => {
     // console.log(widget?.id);
 
-    if (window.confirm("Do you really want to delete thsi widget ??")) {
+    if (window.confirm("Do you really want to delete this widget ??")) {
       try {
         // const response = await delete_api_template({
         //   url: TapdayApiPaths?.customWidgets.deleteById(widget?.id),
@@ -114,7 +114,7 @@ export function WidgetCard({
     router.push(`/custom-blocks?selected-block=${widget.id}`);
     // router.push(`/widget/${widget.id}`);
   };
-
+   
   const editWidget = () => {
     router.push(`/custom-blocks?selected-block=${widget.id}`);
   };
