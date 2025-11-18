@@ -85,7 +85,7 @@ export const useCustomBlockState = () => {
               "Bearer 229033|iCV3Cf3RYXKS3cV9bBe3R3V2WSz1qTVGH5LscWmI2706d738",
           },
           body: JSON.stringify({
-            type: "page",
+            type: "templateBlocks",
             title: blockToSave.title,
             html_content: blockToSave.html,
             generated_html: blockToSave.generatedHtml,
@@ -95,7 +95,9 @@ export const useCustomBlockState = () => {
             height: blockToSave.height.toString(),
             data: blockToSave.data || "",
             translations: blockToSave.translations || "",
-            tagStyles : blockToSave.tagStyles || ""
+            tagStyles : blockToSave.tagStyles || "",
+            shopType: blockToSave.shopType || "global", // global , byIds
+            shops: blockToSave.shops,
           }),
         }
       );

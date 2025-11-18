@@ -124,17 +124,17 @@ export const CustomBlockPage = ({
     let bodyHeight =
       iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
 
-    console.log(state);
-    return
+    // console.log(state);
+    // return
 
     mutate(getallWidgets_swrKey);
 
     if (creatingNewBlock) {
       let bodyObj = {
         title: state.title,
-        type: 'templateBlocks',
-        // shopType:'global', // global , byIds
-        // shops:[1,2,3],
+        type: "templateBlocks",
+        shopType: state.shopType || "global", // global , byIds
+        shops: state.shops,
         html_content: state.html,
         generated_html: generatePreview({
           css: state.css,
@@ -295,8 +295,6 @@ export const CustomBlockPage = ({
     }
   };
 
-  
-
   //  function to handle title change of block
   const handleTitleChange = (value) => {
     // console.log(value)
@@ -337,20 +335,51 @@ export const CustomBlockPage = ({
 
   const handleTagChange = (newTag: string) => {
     // console.log(newTag);
-    setNewBlock((prev) => ({
-      ...prev,
-      shopType: newTag || null,
-    }));
+
+    if (creatingNewBlock) {
+      setNewBlock((prev) => ({
+        ...prev,
+        shopType: newTag || null,
+      }));
+    } else {
+      setState((prev) => ({
+        ...prev,
+        blocks: prev.blocks.map((block) => {
+          if (block.id === state.id) {
+            return {
+              ...block,
+              shopType: newTag || null,
+            };
+          }
+          return block;
+        }),
+      }));
+    }
     // toast.info(`Environment changed to: ${newTag}`)
   };
 
   const handleShopsChange = (selectedShops) => {
     // console.log(selectedShops);
 
-    setNewBlock((prev) => ({
-      ...prev,
-      shops: selectedShops || null,
-    }));
+    if (creatingNewBlock) {
+      setNewBlock((prev) => ({
+        ...prev,
+        shops: selectedShops || null,
+      }));
+    } else {
+      setState((prev) => ({
+        ...prev,
+        blocks: prev.blocks.map((block) => {
+          if (block.id === state.id) {
+            return {
+              ...block,
+              shops: selectedShops || null,
+            };
+          }
+          return block;
+        }),
+      }));
+    }
     // setShops(selectedShops)
     // if (selectedShops.length > 0) {
     //   toast.success(`${selectedShops.length} shop(s) selected`)
@@ -558,7 +587,7 @@ export const CustomBlockPage = ({
                             // { id: 241, name: "Adaans" },
                           ]
                         }
-                        defaultTag={'global'}
+                        defaultTag={"global"}
                       />
                     </div>
                   </div>

@@ -35,4 +35,6 @@ export type CustomBlockType = {
   data?: any;
   translations?: any;
   tagStyles? : any;
+  shopType?: any;
+  shops?: any;
 };
