@@ -141,6 +141,9 @@ export const CustomBlockPage = ({
           head: state.head,
           html: state.html,
           js: state.js,
+          data: state.data,
+          translations: state.translations,
+          tagStyles: state.tagStyles,
         }),
         css_content: state.css,
         js_content: state.js,
@@ -190,6 +193,9 @@ export const CustomBlockPage = ({
           head: state.head,
           html: state.html,
           js: state.js,
+          data: state.data,
+          translations: state.translations,
+          tagStyles: state.tagStyles,
         }),
       });
 
@@ -609,7 +615,7 @@ export const CustomBlockPage = ({
                         link: "",
                       },
                       {
-                        label: "TAGSTYLES",
+                        label: "TAG STYLES",
                         value: "tagStyles",
                         link: "",
                       },
@@ -733,7 +739,7 @@ export const CustomBlockPage = ({
                     <MonacoEditor
                       className="h-full"
                       height="100%"
-                      language="javascript"
+                      language="json"
                       theme="vs-dark"
                       value={state.data || ""}
                       options={{ minimap: { enabled: false } }}
@@ -761,7 +767,7 @@ export const CustomBlockPage = ({
                     <MonacoEditor
                       className="h-full"
                       height="100%"
-                      language="javascript"
+                      language="json"
                       theme="vs-dark"
                       value={state.translations || ""}
                       options={{ minimap: { enabled: false } }}
@@ -789,7 +795,7 @@ export const CustomBlockPage = ({
                     <MonacoEditor
                       className="h-full"
                       height="100%"
-                      language="javascript"
+                      language="json"
                       theme="vs-dark"
                       value={state.tagStyles || ""}
                       options={{ minimap: { enabled: false } }}
@@ -849,6 +855,9 @@ export const CustomBlockPage = ({
                       head: state.head,
                       html: state.html,
                       js: state.js,
+                      data: state.data,
+                      translations: state.translations,
+                      tagStyles: state.tagStyles,
                     })}
                   />
                 </div>

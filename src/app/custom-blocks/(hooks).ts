@@ -95,7 +95,7 @@ export const useCustomBlockState = () => {
             height: blockToSave.height.toString(),
             data: blockToSave.data || "",
             translations: blockToSave.translations || "",
-            tagStyles : blockToSave.tagStyles || "",
+            tagStyles: blockToSave.tagStyles || "",
             shopType: blockToSave.shopType || "global", // global , byIds
             shops: blockToSave.shops,
           }),
@@ -540,11 +540,17 @@ export const useGenerateCustomBlockPreview = () => {
       head,
       html,
       js,
+      translations,
+      data,
+      tagStyles,
     }: {
       head: string;
       css: string;
       html: string;
       js: string;
+      translations?: any;
+      data?: any;
+      tagStyles?: any;
     }) => {
       const fullHTML = `
     <!doctype html>
@@ -589,6 +595,22 @@ export const useGenerateCustomBlockPreview = () => {
    const Tapday = new TadpaySdk({})
 
     ${handleBarsLogic}
+    const translationsData = ${translations}
+    const contentData =  ${data}
+    const tagStylesData = ${tagStyles}
+
+    
+    for (let elementId in tagStylesData) {
+    const element = document.getElementById(elementId)
+    if (!element) continue
+
+    // Loop through all styles for this element
+    const styles = tagStylesData[elementId]
+    for (let i = 0; i < styles.length; i++) {
+      element.style[styles[i].type] = styles[i].value
+    }
+  }
+
 
     var mainBodyHtml = document.getElementById("mainbody").innerHTML
     var template = Handlebars.compile(mainBodyHtml);
