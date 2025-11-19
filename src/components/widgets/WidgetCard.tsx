@@ -37,7 +37,7 @@ interface widgetCardProps {
     generated_html: any;
     data: any;
     translations: any;
-    tagStyles?: any;
+    schema?: any;
   };
   viewMode: "grid" | "list";
   refetchWidgets?: () => void;

@@ -95,7 +95,7 @@ export const useCustomBlockState = () => {
             height: blockToSave.height.toString(),
             data: blockToSave.data || "",
             translations: blockToSave.translations || "",
-            tagStyles: blockToSave.tagStyles || "",
+            schema: blockToSave.schema || "",
             shopType: blockToSave.shopType || "global", // global , byIds
             shops: blockToSave.shops,
           }),
@@ -542,7 +542,7 @@ export const useGenerateCustomBlockPreview = () => {
       js,
       translations,
       data,
-      tagStyles,
+      schema,
     }: {
       head: string;
       css: string;
@@ -550,8 +550,10 @@ export const useGenerateCustomBlockPreview = () => {
       js: string;
       translations?: any;
       data?: any;
-      tagStyles?: any;
+      schema?: any;
     }) => {
+      // console.log(typeof schema);
+
       const fullHTML = `
     <!doctype html>
     <html lang="en">
@@ -589,23 +591,29 @@ export const useGenerateCustomBlockPreview = () => {
     </body>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.8/handlebars.min.js" integrity="sha512-E1dSFxg+wsfJ4HKjutk/WaCzK7S2wv1POn1RRPGh8ZK+ag9l244Vqxji3r6wgz9YBf6+vhQEYJZpSjqWFPg9gg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
+
+
+    <script type="text/typescript">
     ${tapdayClass}
 
    const Tapday = new TadpaySdk({})
 
     ${handleBarsLogic}
-    const translationsData = ${translations}
-    const contentData =  ${data}
-    const tagStylesData = ${tagStyles}
+    
+    
+ 
+    ${translations};
+   
+     ${data};
+    ${schema};
 
     
-    for (let elementId in tagStylesData) {
+    for (let elementId in schemaData) {
     const element = document.getElementById(elementId)
     if (!element) continue
 
     // Loop through all styles for this element
-    const styles = tagStylesData[elementId]
+    const styles = schemaData[elementId]
     for (let i = 0; i < styles.length; i++) {
       element.style[styles[i].type] = styles[i].value
     }
@@ -621,6 +629,8 @@ export const useGenerateCustomBlockPreview = () => {
     
     ${dynamicHeightCalculation}
     </script>
+       <script src="https://cdn.jsdelivr.net/npm/typescript@5.3.3"></script>
+       <script defer src="https://cdn.jsdelivr.net/npm/text-typescript@1.3.0"></script>
     </html>
     `;
       return fullHTML;

@@ -19,7 +19,7 @@ export enum CustomBlockTabsEnums {
   HEAD = "head",
   DATA = "data",
   TRANSLATIONS = "translations",
-  TAGSTYLES = "tagStyles"
+  SCHEMA = "schema"
 }
 
 // custom block atom
@@ -34,7 +34,7 @@ export type CustomBlockType = {
   title: string;
   data?: any;
   translations?: any;
-  tagStyles? : any;
+  schema? : any;
   shopType?: any;
   shops?: any;
 };

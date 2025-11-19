@@ -83,3 +83,8 @@
 #widgetcardiframe body{
   overflow: hidden;
 }
+
+.read-only-background {
+  background-color: #3f3f4622; /* Light gray/purple wash for visual feedback */
+  pointer-events: none; /* Helps prevent mouse interaction */
+}

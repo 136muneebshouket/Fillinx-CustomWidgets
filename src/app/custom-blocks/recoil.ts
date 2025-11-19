@@ -46,5 +46,5 @@ export const defaultCustomBlockItem: CustomBlockType = {
   head: "",
   data:"",
   translations:"",
-  tagStyles : ""
+  schema : ""
 };

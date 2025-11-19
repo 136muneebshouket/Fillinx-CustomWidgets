@@ -1,7 +1,12 @@
 "use client";
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
-import { commentsOfJsTab } from "@/lib/global/GlobalVariables";
+import {
+  commentsOfDataTab,
+  commentsOfJsTab,
+  commentsOfSchemaTab,
+  commentsOfTranslationTab,
+} from "@/lib/global/GlobalVariables";
 
 const CustomBlockPage = dynamic(
   () => import("../page-component").then((mod) => mod.CustomBlockPage),
@@ -19,6 +24,9 @@ const page = () => {
     height: 300,
     generatedHtml: "",
     head: "",
+    translations: commentsOfTranslationTab,
+    data: commentsOfDataTab,
+    schema: commentsOfSchemaTab,
   };
 
   const selectedBlock = useMemo(() => defaultBlock, [defaultBlock]);

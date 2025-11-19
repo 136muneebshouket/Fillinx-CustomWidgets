@@ -64,9 +64,10 @@ const CustomBlock = () => {
               head: widget.head || defaultCustomBlockItem.head,
               generatedHtml: widget.generated_html || widget.html_content || "",
               height: widget.height || defaultCustomBlockItem.height,
-              data : JSON.stringify(widget.data) || defaultCustomBlockItem.data,
-              translations : JSON.stringify(widget.translations) || defaultCustomBlockItem.translations,
-              tagStyles : JSON.stringify(widget.tagStyles) || defaultCustomBlockItem.tagStyles
+              data: widget.data || defaultCustomBlockItem.data,
+              translations:
+                widget.translations || defaultCustomBlockItem.translations,
+              schema: widget.schema || defaultCustomBlockItem.schema,
             })),
           });
         }
@@ -95,7 +96,7 @@ const CustomBlock = () => {
     return <div>Error: {error}</div>;
   }
 
-  // console.log(data)
+  console.log(data)
 
   return (
     <>

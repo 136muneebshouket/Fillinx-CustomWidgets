@@ -23,7 +23,7 @@ interface Widget {
   status: boolean;
   data: any;
   translations: any;
-  tagStyles?: any;
+  schema?: any;
 }
 
 export default function ListWidgets() {

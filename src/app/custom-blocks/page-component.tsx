@@ -56,6 +56,7 @@ export const CustomBlockPage = ({
   selectedBlock,
   creatingNewBlock = false,
 }: Props) => {
+  const router = useRouter();
   const { generatePreview } = useGenerateCustomBlockPreview();
   const [iframeClientHeight, setiframeClientHeight] = useState(0);
   const [saving, setsaving] = useState(false);
@@ -83,6 +84,7 @@ export const CustomBlockPage = ({
   // const [selectedPosition, setselectedPosition] = useState<any>();
 
   const editorRef = useRef<any>(null);
+  const monacoRef = useRef<any>(null);
   const htmlEditorDidMount: OnMount = useCallback((editor) => {
     editorRef.current = editor;
 
@@ -118,14 +120,106 @@ export const CustomBlockPage = ({
     // });
   }, []);
 
+  // const monacoMock = {
+  //   Range: class Range {
+  //     constructor(sl, sc, el, ec) { /* Mock */ }
+  //     static intersectRanges() { return null; }
+  //     static lift() { return { startLineNumber: 0, endLineNumber: 0 }; }
+  //   }
+  // };
+
+  const handleEditorDidMount = useCallback(
+    (editor, monaco, startLine, endLine) => {
+      // Check if the real monaco editor and API are present
+      if (editor.deltaDecorations) {
+        editorRef.current = editor;
+        monacoRef.current = monaco;
+        // NOTE: Monaco uses 1-based indexing for lines and columns.
+        const READ_ONLY_RANGE = {
+          startLineNumber: startLine,
+          startColumn: 1,
+          endLineNumber: endLine, // Go up to the start of the comment line
+          endColumn: 1,
+        };
+
+        // Apply a visual decoration and contextual data to the read-only range
+        editor.deltaDecorations(
+          [], // clear previous decorations
+          [
+            {
+              range: new monaco.Range(
+                READ_ONLY_RANGE.startLineNumber,
+                READ_ONLY_RANGE.startColumn,
+                READ_ONLY_RANGE.endLineNumber,
+                READ_ONLY_RANGE.endColumn
+              ),
+              options: {
+                isWholeLine: true,
+                className: "read-only-background", // Custom class for styling
+                // This context key is used by Monaco to prevent edits
+                inlineClassName: "monaco-read-only-section",
+                hoverMessage: { value: "This section is read-only." },
+              },
+            },
+          ]
+        );
+
+        // --- ENFORCEMENT LOGIC: Block edits within the read-only range ---
+        editor.onDidChangeModelContent((event) => {
+          const { changes } = event;
+          const readOnlyMonacoRange = new monaco.Range(
+            READ_ONLY_RANGE.startLineNumber,
+            READ_ONLY_RANGE.startColumn,
+            READ_ONLY_RANGE.endLineNumber,
+            READ_ONLY_RANGE.endColumn
+          );
+
+          // We use the real monaco API here if it exists.
+          const isEditingReadOnly = changes.some(
+            (change) =>
+              (monaco as any).Range.intersectRanges(
+                readOnlyMonacoRange,
+                (monaco as any).Range.lift(change.range)
+              ) !== null
+          );
+
+          if (isEditingReadOnly) {
+            editor.trigger("source", "undo", null);
+            // setStatus("🛑 Edit Blocked: The interface definition is read-only.");
+          } else {
+            // setStatus("Editing user code...");
+          }
+        });
+      } else {
+        // setStatus("⚠️ Failed to load Monaco Editor. Check dependency resolution.");
+      }
+    },
+    []
+  );
+
+  // --- FUNCTION FACTORY: Returns the onMount function with enclosed line numbers ---
+  const readonlyLinesHandler = useCallback(
+    (startLine, endLine) => (editor, monaco) => {
+      // This function is the actual onMount handler passed to the Editor component
+      handleEditorDidMount(editor, monaco, startLine, endLine);
+    },
+    [handleEditorDidMount]
+  );
+
   const handleSaveBlock = useCallback(async () => {
     // setIsSave((prev) => ({ ...prev, isSaved: false }))
 
     let bodyHeight =
       iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
 
-    // console.log(state);
-    // return
+    // console.log({
+    //   data: JSON.stringify(state.data) || "", //  type: 'templateBlocks' this needs to be added otherwise app will break
+    //   translations: JSON.stringify(state.translations) || "",
+    //   schema: JSON.stringify(state.schema) || "",
+    // });
+    // return;
+
+    setsaving(true);
 
     mutate(getallWidgets_swrKey);
 
@@ -143,15 +237,15 @@ export const CustomBlockPage = ({
           js: state.js,
           data: state.data,
           translations: state.translations,
-          tagStyles: state.tagStyles,
+          schema: state.schema,
         }),
         css_content: state.css,
         js_content: state.js,
         head: state.head,
         height: bodyHeight?.toString() || "",
-        data: state.data || "", //  type: 'templateBlocks' this needs to be added otherwise app will break
-        translations: state.translations || "",
-        tagStyles: state.tagStyles || "",
+        data: JSON.stringify(state.data) || "", //  type: 'templateBlocks' this needs to be added otherwise app will break
+        translations: JSON.stringify(state.translations) || "",
+        schema: JSON.stringify(state.schema) || "",
       };
 
       try {
@@ -169,6 +263,7 @@ export const CustomBlockPage = ({
           position: "top-right",
         });
       } catch (error) {
+        setsaving(false);
         toast.error((error as any)?.message, {
           position: "top-right",
         });
@@ -181,7 +276,6 @@ export const CustomBlockPage = ({
     // console.log(state)
     // return
     try {
-      setsaving(true);
       // const bodyHeight =
       //   iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
 
@@ -195,7 +289,7 @@ export const CustomBlockPage = ({
           js: state.js,
           data: state.data,
           translations: state.translations,
-          tagStyles: state.tagStyles,
+          schema: state.schema,
         }),
       });
 
@@ -219,9 +313,11 @@ export const CustomBlockPage = ({
     state.html,
     state.id,
     state.js,
+    state.data,
+    state.translations,
+    state.schema,
   ]);
 
-  const router = useRouter();
   // console.log('generate preview--->', generatePreview())
 
   const deleteBlock = useCallback(async () => {
@@ -615,8 +711,8 @@ export const CustomBlockPage = ({
                         link: "",
                       },
                       {
-                        label: "TAG STYLES",
-                        value: "tagStyles",
+                        label: "SCHEMA",
+                        value: "schema",
                         link: "",
                       },
                     ]}
@@ -739,11 +835,11 @@ export const CustomBlockPage = ({
                     <MonacoEditor
                       className="h-full"
                       height="100%"
-                      language="json"
+                      language="typescript"
                       theme="vs-dark"
                       value={state.data || ""}
                       options={{ minimap: { enabled: false } }}
-                      onMount={htmlEditorDidMount}
+                      onMount={readonlyLinesHandler(1, 28)}
                       onChange={(value) => {
                         // handleUpdate();
                         // setState((prev) => ({
@@ -767,11 +863,11 @@ export const CustomBlockPage = ({
                     <MonacoEditor
                       className="h-full"
                       height="100%"
-                      language="json"
+                      language="typescript"
                       theme="vs-dark"
-                      value={state.translations || ""}
+                      value={state.translations}
                       options={{ minimap: { enabled: false } }}
-                      onMount={htmlEditorDidMount}
+                      onMount={readonlyLinesHandler(1, 39)}
                       onChange={(value) => {
                         // handleUpdate();
                         // setState((prev) => ({
@@ -791,15 +887,15 @@ export const CustomBlockPage = ({
                     />
                   )}
 
-                  {selectedTab === CustomBlockTabsEnums.TAGSTYLES && (
+                  {selectedTab === CustomBlockTabsEnums.SCHEMA && (
                     <MonacoEditor
                       className="h-full"
                       height="100%"
-                      language="json"
+                      language="typescript"
                       theme="vs-dark"
-                      value={state.tagStyles || ""}
+                      value={state.schema}
                       options={{ minimap: { enabled: false } }}
-                      onMount={htmlEditorDidMount}
+                      onMount={readonlyLinesHandler(1, 26)}
                       onChange={(value) => {
                         // handleUpdate();
                         // setState((prev) => ({
@@ -814,7 +910,7 @@ export const CustomBlockPage = ({
                         //     return block;
                         //   }),
                         // }));
-                        handleChangeMonaco(value, "tagStyles");
+                        handleChangeMonaco(value, "schema");
                       }}
                     />
                   )}
@@ -857,7 +953,7 @@ export const CustomBlockPage = ({
                       js: state.js,
                       data: state.data,
                       translations: state.translations,
-                      tagStyles: state.tagStyles,
+                      schema: state.schema,
                     })}
                   />
                 </div>
