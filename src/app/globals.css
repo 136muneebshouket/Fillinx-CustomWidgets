@@ -85,6 +85,6 @@
 }
 
 .read-only-background {
-  background-color: #3f3f4622; /* Light gray/purple wash for visual feedback */
+  background-color: #948d8d22; /* Light gray/purple wash for visual feedback */
   pointer-events: none; /* Helps prevent mouse interaction */
 }

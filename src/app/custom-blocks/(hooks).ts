@@ -74,9 +74,10 @@ export const useCustomBlockState = () => {
 
     // Send update to API
     try {
-      const { baseUrl } = await import("../utils/use-fetch");
+      // const { baseUrl } = await import("../utils/use-fetch");
       const response = await fetch(
-        `${baseUrl}/custom-widgets/${selectedBlckId}`,
+        // `${baseUrl}/custom-widgets/${selectedBlckId}`,
+        TapdayApiPaths?.customWidgets.updateById(selectedBlckId),
         {
           method: "PUT",
           headers: {
@@ -97,7 +98,7 @@ export const useCustomBlockState = () => {
             translations: blockToSave.translations || "",
             schema: blockToSave.schema || "",
             shopType: blockToSave.shopType || "global", // global , byIds
-            shops: blockToSave.shops,
+            shops: blockToSave.shops
           }),
         }
       );

@@ -243,9 +243,9 @@ export const CustomBlockPage = ({
         js_content: state.js,
         head: state.head,
         height: bodyHeight?.toString() || "",
-        data: JSON.stringify(state.data) || "", //  type: 'templateBlocks' this needs to be added otherwise app will break
-        translations: JSON.stringify(state.translations) || "",
-        schema: JSON.stringify(state.schema) || "",
+        data: (state.data) || "", //  type: 'templateBlocks' this needs to be added otherwise app will break
+        translations: (state.translations) || "",
+        schema: (state.schema) || ""
       };
 
       try {
@@ -253,7 +253,7 @@ export const CustomBlockPage = ({
           url: TapdayApiPaths?.customWidgets.create(),
           payload: bodyObj,
         });
-        // console.log(response);
+        console.log(response);
         router.push(`/`);
         // let widgetId = response?.data ? response?.data?.id : null;
         // if (widgetId) {
@@ -683,13 +683,13 @@ export const CustomBlockPage = ({
                       <SelectShopForWidget
                         onTagChange={handleTagChange}
                         onShopsChange={handleShopsChange}
-                        defaultShops={
-                          [
-                            // { id: 377, name: "accuspot" },
-                            // { id: 241, name: "Adaans" },
-                          ]
+                        defaultShops={state?.shops || []
+                          // [
+                          //   // { id: 377, name: "accuspot" },
+                          //   // { id: 241, name: "Adaans" },
+                          // ]
                         }
-                        defaultTag={"global"}
+                        defaultTag={state?.shopType || "global"}
                       />
                     </div>
                   </div>

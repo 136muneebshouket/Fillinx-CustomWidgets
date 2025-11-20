@@ -101,7 +101,9 @@ export default function ListWidgets() {
   }
 
   if (data) {
-    widgets = (data as any)?.data?.data;
+    // console.log(data)
+    // widgets = (data as any)?data.?.data;
+    widgets = (data as any)?.data;
     // setWidgets((data as any)?.data?.data);
   }
 

@@ -54,7 +54,8 @@ const CustomBlock = () => {
         // Adjust this mapping based on actual API response structure
         if (responseData && responseData.data) {
           setData({
-            blocks: responseData.data?.data.map((widget: any) => ({
+            // blocks: responseData?.data?.data.map((widget: any) => ({
+            blocks: responseData?.data.map((widget: any) => ({
               ...defaultCustomBlockItem,
               id: widget.id || defaultCustomBlockItem.id,
               title: widget.title || defaultCustomBlockItem.title,
@@ -68,6 +69,8 @@ const CustomBlock = () => {
               translations:
                 widget.translations || defaultCustomBlockItem.translations,
               schema: widget.schema || defaultCustomBlockItem.schema,
+              shopType: widget?.shopType,
+              shops: widget?.shops,
             })),
           });
         }
@@ -96,7 +99,7 @@ const CustomBlock = () => {
     return <div>Error: {error}</div>;
   }
 
-  console.log(data)
+  // console.log(data)
 
   return (
     <>

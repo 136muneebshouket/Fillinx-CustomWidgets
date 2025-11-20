@@ -25,7 +25,8 @@ export const TapdayApiPaths = {
    */
   customWidgets: {
     // Base path for the custom widgets module
-    BASE: `${TAPDAY_API_BASE_URL}/custom-widgets`,
+    // BASE: `${TAPDAY_API_BASE_URL}/custom-widgets`,
+    BASE: `https://darkslategray-quail-343322.hostingersite.com/api/custom-widgets`,
 
     /**
      * GET endpoint to fetch a list of all custom widgets.
