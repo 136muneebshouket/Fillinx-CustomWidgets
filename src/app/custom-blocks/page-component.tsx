@@ -867,7 +867,7 @@ export const CustomBlockPage = ({
                       theme="vs-dark"
                       value={state.translations}
                       options={{ minimap: { enabled: false } }}
-                      onMount={readonlyLinesHandler(1, 39)}
+                      onMount={readonlyLinesHandler(1, 29)}
                       onChange={(value) => {
                         // handleUpdate();
                         // setState((prev) => ({

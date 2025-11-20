@@ -24,8 +24,10 @@ const allCommentsCombined =
 
 
 const translationinterfaceDeclaration = 
-"interface LanguageMap {\n" +
-"  [key: string]: string;\n" +
+`type LanguageCode =
+ | "af" | "ak" | "am" | "ar" | "as" | "az" | "be" | "bg" | "bm" | "bn" | "bo" | "br" | "bs" | "ca" | "ce" | "ckb" | "cs" | "cu" | "cy" | "da" | "de" | "dz" | "ee" | "el" | "en" | "eo" | "es" | "et" | "eu" | "fa" | "ff" | "fi" | "fil" | "fo" | "fr" | "fy" | "ga" | "gd" | "gl" | "gu" | "gv" | "ha" | "he" | "hi" | "hr" | "hu" | "hy" | "ia" | "id" | "ig" | "ii" | "is" | "it" | "ja" | "jv" | "ka" | "ki" | "kk" | "kl" | "km" | "kn" | "ko" | "ks" | "ku" | "kw" | "ky" | "la" | "lb" | "lg" | "ln" | "lo" | "lt" | "lu" | "lv" | "mg" | "mi" | "mk" | "ml" | "mn" | "mo" | "mr" | "ms" | "mt" | "my" | "nb" | "nd" | "ne" | "nl" | "nn" | "no" | "om" | "or" | "os" | "pa" | "pl" | "ps" | "pt" | "pt_br" | "pt_pt" | "qu" | "rm" | "rn" | "ro" | "ru" | "rw" | "sa" | "sc" | "sd" | "se" | "sg" | "sh" | "si" | "sk" | "sl" | "sn" | "so" | "sq" | "sr" | "su" | "sv" | "sw" | "ta" | "te" | "tg" | "th" | "ti" | "tk" | "to" | "tr" | "tt" | "ug" | "uk" | "ur" | "uz" | "vi" | "vo" | "wo" | "xh" | "yi" | "yo" | "zh" | "zh_cn" | "zh_tw" | "zu";`+
+"\n type LanguageMap = {\n" +
+"   [key in LanguageCode]?: string;\n" +
 "}\n" +
 "interface Translations {\n" +
 "  [key: string]: LanguageMap;\n" +
@@ -34,18 +36,18 @@ const translationinterfaceDeclaration =
 
 const translationComments = "/**\n" +
 " * # 📝 Translation Data Editor/Writer Guide\n" +
-" *\n" +
-" * This document outlines how to correctly enter translation data into the editor.\n" +
-" * The data structure is a nested JavaScript object where:\n" +
-" *\n" +
-" * 1.  **The top-level key** is the **unique Translation Key** (or 'ID').\n" +
-" * 2.  **The nested keys** are the **two-letter ISO Language Codes** (e.g., 'en', 'es', 'fr').\n" +
-" * 3.  **The nested values** are the actual translated **strings**.\n" +
-" *\n" +
-" * All translated text must be enclosed in **single quotes (' ')**.\n" +
-" *\n" +
-" * ---\n" +
-" *\n" +
+// " *\n" +
+// " * This document outlines how to correctly enter translation data into the editor.\n" +
+// " * The data structure is a nested JavaScript object where:\n" +
+// " *\n" +
+// " * 1.  **The top-level key** is the **unique Translation Key** (or 'ID').\n" +
+// " * 2.  **The nested keys** are the **two-letter ISO Language Codes** (e.g., 'en', 'es', 'fr').\n" +
+// " * 3.  **The nested values** are the actual translated **strings**.\n" +
+// " *\n" +
+// " * All translated text must be enclosed in **single quotes (' ')**.\n" +
+// " *\n" +
+// " * ---\n" +
+// " *\n" +
 " * ## Example Structure:\n" +
 " *\n" +
 " * The following object shows the correct format for translation entries.\n" +
