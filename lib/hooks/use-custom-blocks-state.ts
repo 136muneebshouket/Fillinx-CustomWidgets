@@ -445,7 +445,7 @@ ${css}
 `;
       return fullHTML;
     },
-    []
+    [dynamicHeightCalculation, handleBarsLogic, tapdayClass]
   );
   return { generatePreview };
 };

@@ -68,6 +68,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import ShopListDropdown from "./childComponents/ShopListDropdown";
+import { Checkbox } from "@/components/ui/checkbox";
+import useUnsavedChanges from "@/hooks/unSavedChanges";
+import { useSafeNavigation } from "@/hooks/safeNavigation";
 
 type EditorTab =
   | "html"
@@ -104,6 +107,8 @@ export default function WidgetForm({
   const { handleCreateBlock, handleSaveBlocks } = useCustomBlockState();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  const [saved, setSaved] = useState(true);
+
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [activeTab, setActiveTab] = useState<EditorTab>("html");
 
@@ -112,12 +117,11 @@ export default function WidgetForm({
   const [saving, setSaving] = useState(false);
   // CHANGE: allow iframe height default via prop
   const [iframeHeight, setIframeHeight] = useState(defaults?.height ?? 300);
+  const [iframeWidth, setIframeWidth] = useState(460);
 
   // Block details
   // CHANGE: initialize from defaults when provided
-  const [blockTitle, setBlockTitle] = useState(
-    defaults?.title ?? "Custom Block Title"
-  );
+  const [blockTitle, setBlockTitle] = useState(defaults?.title);
   const [blockDescription, setBlockDescription] = useState(
     defaults?.description ?? ""
   );
@@ -156,14 +160,69 @@ export default function WidgetForm({
 
   // 1. State to track if the text is expanded
   const [isExpanded, setIsExpanded] = useState(false);
+  // State to track whether the margin should be applied
+  const [hasMargin, setHasMargin] = useState(true);
   // 2. Function to toggle the expanded state
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
-  console.log(blockDescription.split("\n").length > 3)
+  // console.log(blockDescription.split("\n").length > 3);
 
   // Define the max height for the collapsed state
   const maxHeight = "4.5rem"; // Example: 3 lines @ 1.5rem line-height
+
+  // track unsaved changes //////////////
+  useUnsavedChanges(!saved);
+  // Add router.push protection
+  const { safePush } = useSafeNavigation(!saved);
+
+  useEffect(() => {
+    const isDirty =
+      defaults.html != html ||
+      defaults.css != css ||
+      defaults.js != js ||
+      defaults.data != data ||
+      defaults.translations != translations ||
+      defaults.schema != schema ||
+      defaults.shopType != shopType ||
+      defaults.title != blockTitle ||
+      defaults.status != blockStatus ||
+      defaults.description != blockDescription ||
+      defaults.shops != selectedShops;
+
+    setSaved(!isDirty);
+  }, [
+    defaults,
+    html,
+    css,
+    js,
+    data,
+    translations,
+    schema,
+    shopType,
+    selectedShops,
+    blockTitle,
+    blockStatus,
+    blockDescription,
+  ]);
+
+  console.log(saved);
+
+  useEffect(() => {
+    if (!iframeRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const newWidth = entry.contentRect.width;
+        setIframeWidth(newWidth);
+        // console.log("Width:", newWidth);
+      }
+    });
+
+    observer.observe(iframeRef.current);
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -408,7 +467,7 @@ export default function WidgetForm({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.push("/")}
+            onClick={() => safePush("/")}
             className="mr-2"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -440,7 +499,22 @@ export default function WidgetForm({
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-2">
                     <div>
-                      <h2 className="text-lg font-semibold">{blockTitle}</h2>
+                      <div className="flex gap-2">
+                        <h2 className="text-lg font-semibold">{blockTitle}</h2>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setTempTitle(blockTitle);
+                            setTempDescription(blockDescription);
+                            setTempStatus(blockStatus);
+                            setEditDialogOpen(true);
+                          }}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </div>
                       {/* 3. The description element with conditional styling */}
                       <p
                         className={`
@@ -457,9 +531,8 @@ export default function WidgetForm({
                         onClick={toggleExpand}
                       >
                         {blockDescription || "Create your custom block"}
-                        
                       </p>
-                        {/* Optional: Add a visual indicator for expansion
+                      {/* Optional: Add a visual indicator for expansion
                         {blockDescription && ( // Simple check for potential overflow
                           <button
                             onClick={toggleExpand}
@@ -468,22 +541,7 @@ export default function WidgetForm({
                             {isExpanded ? "Show Less" : "Show More"}
                           </button>
                         )} */}
-
-                    
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setTempTitle(blockTitle);
-                        setTempDescription(blockDescription);
-                        setTempStatus(blockStatus);
-                        setEditDialogOpen(true);
-                      }}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
                   </div>
                   <div className="flex items-center gap-2">
                     {/* Shop Type Selector */}
@@ -749,15 +807,42 @@ export default function WidgetForm({
           <ResizablePanel defaultSize={30}>
             <div className="h-full flex flex-col">
               {/* Preview Header */}
-              <div className="border-b p-4">
-                <h2 className="text-lg font-semibold">Preview</h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Live preview
-                </p>
+              <div className="border-b p-4 flex justify-between items-end">
+                <div>
+                  <h2 className="text-lg font-semibold">Preview</h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Live preview
+                  </p>
+                </div>
+                <div className="flex flex-row gap-4">
+                  <div>
+                    <p className="text-sm text-slate-400">
+                      Width : {iframeWidth ? iframeWidth.toFixed(2) : ""} px
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="margin-toggle"
+                      checked={hasMargin}
+                      onCheckedChange={(checked: any) => setHasMargin(checked)}
+                      className="border border-slate-400 opacity-100"
+                    />
+                    <Label
+                      htmlFor="margin-toggle"
+                      className="cursor-pointer text-sm"
+                    >
+                      Apply margin
+                    </Label>
+                  </div>
+                </div>
               </div>
 
               {/* Preview Content */}
-              <div className="flex-1 overflow-auto  p-6 ">
+              <div
+                className={
+                  "flex-1 overflow-auto" + " " + `${hasMargin ? "p-6" : "p-0"}`
+                }
+              >
                 {/* <motion.iframe
                   initial={{ height: iframeHeight }}
                   animate={{ height: iframeHeight }}
