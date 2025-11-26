@@ -1,1 +1,0 @@
-export const getallWidgets_swrKey = 'getallWidgets_swrKey'
