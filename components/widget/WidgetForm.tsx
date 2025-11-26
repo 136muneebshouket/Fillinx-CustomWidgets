@@ -154,6 +154,17 @@ export default function WidgetForm({
   const [tempDescription, setTempDescription] = useState(blockDescription);
   const [tempStatus, setTempStatus] = useState(blockStatus);
 
+  // 1. State to track if the text is expanded
+  const [isExpanded, setIsExpanded] = useState(false);
+  // 2. Function to toggle the expanded state
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+  console.log(blockDescription.split("\n").length > 3)
+
+  // Define the max height for the collapsed state
+  const maxHeight = "4.5rem"; // Example: 3 lines @ 1.5rem line-height
+
   useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") {
@@ -224,7 +235,7 @@ export default function WidgetForm({
 
       const bodyData = {
         title: tempTitle,
-        description:tempDescription,
+        description: tempDescription,
         html,
         css,
         js,
@@ -242,6 +253,7 @@ export default function WidgetForm({
 
       if (!editMode) {
         await handleCreateBlock(bodyData);
+        router.push("/");
       } else {
         await handleSaveBlocks({
           blockData: bodyData,
@@ -255,7 +267,6 @@ export default function WidgetForm({
           ? "Custom block updated successfully"
           : "Custom block created successfully"
       );
-      router.push("/");
     } catch (error) {
       toast.error("Failed to create custom block");
       console.error(error);
@@ -430,9 +441,35 @@ export default function WidgetForm({
                   <div className="flex items-start gap-2">
                     <div>
                       <h2 className="text-lg font-semibold">{blockTitle}</h2>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      {/* 3. The description element with conditional styling */}
+                      <p
+                        className={`
+          text-sm text-muted-foreground mt-1 cursor-pointer transition-all duration-300 ease-in-out 
+          ${
+            isExpanded ? "whitespace-normal overflow-visible" : "truncate-lines"
+          }
+        `}
+                        style={
+                          isExpanded
+                            ? {} // No max height when expanded
+                            : { maxHeight: maxHeight } // Apply max height when collapsed
+                        }
+                        onClick={toggleExpand}
+                      >
                         {blockDescription || "Create your custom block"}
+                        
                       </p>
+                        {/* Optional: Add a visual indicator for expansion
+                        {blockDescription && ( // Simple check for potential overflow
+                          <button
+                            onClick={toggleExpand}
+                            className="text-xs text-blue-500 hover:text-blue-700 mt-1 cursor-pointer"
+                          >
+                            {isExpanded ? "Show Less" : "Show More"}
+                          </button>
+                        )} */}
+
+                    
                     </div>
                     <Button
                       variant="ghost"
@@ -743,7 +780,7 @@ export default function WidgetForm({
 
                 <iframe
                   ref={iframeRef}
-                  className="w-full border rounded-lg overflow-scroll"
+                  className="w-full border overflow-scroll"
                   style={{ height: `${iframeHeight}px` }}
                   title="Preview"
                   srcDoc={previewHtml}

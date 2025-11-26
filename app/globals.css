@@ -127,3 +127,22 @@
   background-color: #dcd1d122; /* Light gray/purple wash for visual feedback */
   pointer-events: none; /* Helps prevent mouse interaction */
 }
+
+/* Custom CSS for multi-line ellipsis */
+.truncate-lines {
+  /* Required properties */
+  /* overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical; */
+  
+  /* Set the number of lines you want to show 
+     If max-height is set to 4.5rem and line-height is 1.5rem (text-sm default) 
+     this value should be 3 (4.5 / 1.5 = 3). Adjust this value (and max-height) as needed.
+  */
+  /* -webkit-line-clamp: 3;  */
+
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  width: 160px; 
+  white-space: nowrap;
+}
