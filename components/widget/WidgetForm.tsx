@@ -27,6 +27,8 @@ import {
 import { defaultCustomBlockItem } from "@/lib/recoil/custom-blocks-state";
 import { toast } from "sonner";
 
+
+
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
 });
@@ -66,7 +68,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { cn, tsToJs } from "@/lib/utils";
 import ShopListDropdown from "./childComponents/ShopListDropdown";
 import { Checkbox } from "@/components/ui/checkbox";
 import useUnsavedChanges from "@/hooks/unSavedChanges";
@@ -257,6 +259,20 @@ export default function WidgetForm({
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
+  //   const tsCode: string = `
+  //   export type FileArgument = string | Buffer;
+
+  //   function main(file: FileArgument) {
+  //     console.log('Hello world!', file);
+  //   }
+  // `;
+
+  // const compiledJsCode: string = compile(tsCode);
+  // console.log(compiledJsCode);
+
+
+  // const tsCode = `const greeting: string = "Hello"; console.log(greeting);`;
+
   const handleSave = async () => {
     const bodyHeight =
       iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
@@ -287,6 +303,7 @@ export default function WidgetForm({
     //   status: blockStatus,
     // });
 
+    
     // return;
 
     if (saving) {
@@ -826,7 +843,7 @@ export default function WidgetForm({
                     height="100%"
                     language="typescript"
                     onChange={(value) => setData(value || "")}
-                    onMount={readonlyLinesHandler(1, 28)}
+                    onMount={readonlyLinesHandler(1, 11)}
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={data}
                     options={{
@@ -843,7 +860,7 @@ export default function WidgetForm({
                     height="100%"
                     language="typescript"
                     onChange={(value) => setTranslations(value || "")}
-                    onMount={readonlyLinesHandler(1, 29)}
+                    onMount={readonlyLinesHandler(1, 10)}
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={translations}
                     options={{
@@ -860,7 +877,7 @@ export default function WidgetForm({
                     height="100%"
                     language="typescript"
                     onChange={(value) => setSchema(value || "")}
-                    onMount={readonlyLinesHandler(1, 26)}
+                    onMount={readonlyLinesHandler(1, 12)}
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={schema}
                     options={{

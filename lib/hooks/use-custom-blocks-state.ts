@@ -6,6 +6,8 @@ import {
 import { postApi, updateApi, deleteApi } from "../api/api-service";
 import { ApiPaths } from "../api-paths/api-paths";
 import { devCart } from "../global/data";
+import * as ts from "typescript";
+import { tsToJs } from "../utils";
 
 export const useGenerateCustomBlockPreview = () => {
   const devProduct = {
@@ -475,6 +477,10 @@ export const useCustomBlockState = () => {
 
     // updateBlock(selectedBlockId, { height, generated_html });
     const blockToSave = blockData;
+    
+    const dataJS = tsToJs(blockToSave.data || "");
+    const translationsJS = tsToJs(blockToSave.translations || "");
+    const schemaJS = tsToJs(blockToSave.schema || "");
     // Send update to API
     try {
       await updateApi({
@@ -491,6 +497,9 @@ export const useCustomBlockState = () => {
           data: blockToSave.data || "",
           translations: blockToSave.translations || "",
           schema: blockToSave.schema || "",
+          data_js: dataJS,
+          translations_js: translationsJS,
+          schema_js: schemaJS,
           shopType: blockToSave.shopType || "global",
           shops: blockToSave.shops || [],
           status: blockToSave.status,
@@ -505,6 +514,10 @@ export const useCustomBlockState = () => {
 
   const handleCreateBlock = async (blockData: Partial<CustomBlockType>) => {
     try {
+      const dataJS = tsToJs(blockData.data || "");
+      const translationsJS = tsToJs(blockData.translations || "");
+      const schemaJS = tsToJs(blockData.schema || "");
+
       const response = await postApi({
         url: ApiPaths.customBlocks.create(),
         data: {
@@ -522,6 +535,9 @@ export const useCustomBlockState = () => {
           data: blockData.data || "",
           translations: blockData.translations || "",
           schema: blockData.schema || "",
+          data_js: dataJS,
+          translations_js: translationsJS,
+          schema_js: schemaJS,
           status: blockData.status ?? true,
           created_at: blockData?.created_at || new Date(),
         },

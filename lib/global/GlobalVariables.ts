@@ -113,28 +113,11 @@ const schemaTabGuideString = "/** STYLE SCHEMA GUIDE: \n" +
 
 
 
-const interfaceDataTab = `// 1. Define the possible literal string values for the 'dataType' property.
-type ContentDataType = 'products' | 'collections' | 'mixedItems';
-
-// 2. Define a flexible type for the content properties, allowing them to be 
-// either an array of items (like Product[]) or an object (like { id: Product }).
-// NOTE: For a real application, you would replace 'unknown' with specific interfaces 
-// like 'Product[] | Record<string, Product>'. We use 'unknown' here for flexibility.
+const interfaceDataTab = `type ContentDataType = 'products' | 'collections' | 'mixedItems';
 type ContentValue = unknown[] | Record<string, unknown>;
-
-/**
- * Interface for a single Content Block definition.
- * This block specifies what type of content it holds and provides an optional title.
- */
 interface ContentBlock {
-  // Must be one of the defined literal types (products, collections, or mixedItems)
   dataType: ContentDataType;
-  
-  // A descriptive title for the block
   title: string;
-
-  // The fields that hold the actual content data.
-  // Their type is flexible (Array or Object) to accommodate different formats.
   collections?: ContentValue;
   products?: ContentValue;
   mixedItems?: ContentValue;
@@ -144,7 +127,7 @@ let contentData: ContentBlock = {
 
 }`
 
-export const commentsOfJsTab = allCommentsCombined;
+export const commentsOfJsTab = '';
 export const commentsOfDataTab = interfaceDataTab
-export const commentsOfTranslationTab = translationComments + '\n// start writing from here  \n\n\n}';
-export const commentsOfSchemaTab = schemaTabGuideString + '// start writing from here  \n\n}';
+export const commentsOfTranslationTab = translationinterfaceDeclaration + '\n// start writing from here  \n\n\n}';
+export const commentsOfSchemaTab = schemaInterfaceDeclaration + '// start writing from here  \n\n}';
