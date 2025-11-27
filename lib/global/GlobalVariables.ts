@@ -77,7 +77,7 @@ const schemaInterfaceDeclaration =
 "  settingType: string;\n" +
 "  type: string;\n" +
 "  label: string;\n" +
-"  value: string;\n" +
+"  value: any;\n" +
 "}\n" +
 "type StyleRule = StyleProperty[];\n" +
 "interface TagStyles {\n" +

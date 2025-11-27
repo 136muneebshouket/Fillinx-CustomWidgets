@@ -206,7 +206,7 @@ export default function WidgetForm({
     blockDescription,
   ]);
 
-  console.log(saved);
+  // console.log(saved);
 
   useEffect(() => {
     if (!iframeRef.current) return;
@@ -289,6 +289,12 @@ export default function WidgetForm({
 
     // return;
 
+    if (saving) {
+      return;
+    }
+
+    setSaved(true);
+
     try {
       setSaving(true);
 
@@ -345,10 +351,16 @@ export default function WidgetForm({
   });
 
   //   console.log(iframeHeight);
+  const handleSaveRef = useRef(handleSave);
+
+  // Update ref whenever handleSave changes
+  useEffect(() => {
+    handleSaveRef.current = handleSave;
+  }, [handleSave]);
 
   const listenToIframeMessages = (event: any) => {
     // Verify the source of the message
-    // console.log(event.origin, window.location.origin);
+    console.log(event.origin, window.location.origin);
     if (event.origin !== window.location.origin) {
       // Ensure message is coming from the expected origin
       return;
@@ -367,16 +379,34 @@ export default function WidgetForm({
       }
     }
   };
+  const handleKeyDown = async (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+      // handle async function
+      e.preventDefault();
+      if (!saving) {
+        await handleSaveRef.current();
+      }
+    }
+  };
 
   // Register the message event listener when the component mounts
   useEffect(() => {
     window.addEventListener("message", listenToIframeMessages);
+    window.addEventListener("keydown", handleKeyDown);
 
     // Cleanup the listener when the component unmounts
     return () => {
       window.removeEventListener("message", listenToIframeMessages);
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [handleSave, saving]);
+
+  const SCHEMA_OBJECT = `{
+    settingType: "",
+    type: "",
+    label: "",
+    value: ""
+  }`;
 
   const handleEditorDidMount = useCallback(
     (editor: any, monaco: any, startLine: number, endLine: number) => {
@@ -443,6 +473,46 @@ export default function WidgetForm({
       } else {
         // setStatus("⚠️ Failed to load Monaco Editor. Check dependency resolution.");
       }
+
+      // // for actions /////////////////////////////////
+      // editor.addAction({
+      //   id: "add-schema-object",
+      //   label: "Add schema object",
+      //   contextMenuGroupId: "navigation",
+      //   contextMenuOrder: 0,
+
+      //   run: () => {
+      //     const position = editor.getPosition(); // current cursor location
+      //      if (!position) return; // safety
+      //     const range = new monaco.Range(
+      //       position.lineNumber,
+      //       position.column,
+      //       position.lineNumber,
+      //       position.column
+      //     );
+
+      //     editor.executeEdits("insert-schema-object", [
+      //       {
+      //         range,
+      //         text: SCHEMA_OBJECT + ",\n",
+      //         forceMoveMarkers: true
+      //       }
+      //     ]);
+      //   }
+      // });
+
+      // Bind CTRL/CMD + S
+      // editor.addCommand(
+      //   monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+      //   async () => {
+      //     console.log("CTRL+S pressed!");
+      //     console.log(saving)
+      //     if (!saving) {
+      //       await handleSave();
+      //     }
+      //     // mySaveFunction(); // <-- call your function here
+      //   }
+      // );
     },
     []
   );
@@ -690,6 +760,7 @@ export default function WidgetForm({
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={html}
                     onChange={(value) => setHtml(value || "")}
+                    onMount={readonlyLinesHandler(0, 0)}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
@@ -706,6 +777,7 @@ export default function WidgetForm({
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={css}
                     onChange={(value) => setCss(value || "")}
+                    onMount={readonlyLinesHandler(0, 0)}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
@@ -722,6 +794,7 @@ export default function WidgetForm({
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={js}
                     onChange={(value) => setJs(value || "")}
+                    onMount={readonlyLinesHandler(0, 0)}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
@@ -738,6 +811,7 @@ export default function WidgetForm({
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={head}
                     onChange={(value) => setHead(value || "")}
+                    onMount={readonlyLinesHandler(0, 0)}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
@@ -751,10 +825,10 @@ export default function WidgetForm({
                     className="h-full"
                     height="100%"
                     language="typescript"
+                    onChange={(value) => setData(value || "")}
                     onMount={readonlyLinesHandler(1, 28)}
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={data}
-                    onChange={(value) => setData(value || "")}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
@@ -768,10 +842,10 @@ export default function WidgetForm({
                     className="h-full"
                     height="100%"
                     language="typescript"
+                    onChange={(value) => setTranslations(value || "")}
                     onMount={readonlyLinesHandler(1, 29)}
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={translations}
-                    onChange={(value) => setTranslations(value || "")}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
@@ -785,10 +859,10 @@ export default function WidgetForm({
                     className="h-full"
                     height="100%"
                     language="typescript"
+                    onChange={(value) => setSchema(value || "")}
                     onMount={readonlyLinesHandler(1, 26)}
                     theme={theme === "dark" ? "vs-dark" : "light"}
                     value={schema}
-                    onChange={(value) => setSchema(value || "")}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
