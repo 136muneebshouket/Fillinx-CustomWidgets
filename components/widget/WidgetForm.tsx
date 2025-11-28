@@ -27,8 +27,6 @@ import {
 import { defaultCustomBlockItem } from "@/lib/recoil/custom-blocks-state";
 import { toast } from "sonner";
 
-
-
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
 });
@@ -68,7 +66,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn, tsToJs } from "@/lib/utils";
+import { cn, jsToJson, tsToJs } from "@/lib/utils";
 import ShopListDropdown from "./childComponents/ShopListDropdown";
 import { Checkbox } from "@/components/ui/checkbox";
 import useUnsavedChanges from "@/hooks/unSavedChanges";
@@ -270,8 +268,9 @@ export default function WidgetForm({
   // const compiledJsCode: string = compile(tsCode);
   // console.log(compiledJsCode);
 
-
   // const tsCode = `const greeting: string = "Hello"; console.log(greeting);`;
+
+  // const dataJS = tsToJs(data || "");
 
   const handleSave = async () => {
     const bodyHeight =
@@ -303,7 +302,6 @@ export default function WidgetForm({
     //   status: blockStatus,
     // });
 
-    
     // return;
 
     if (saving) {

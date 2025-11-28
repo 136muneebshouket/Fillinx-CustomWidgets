@@ -144,7 +144,7 @@ const ShopListDropdown = ({
           <hr />
           {isLoading ? (
             <>
-              <div className="flex items-center justify-center py-8 bg-background dark:bg-slate-950">
+              <div className="flex items-center justify-center py-8 bg-background dark:bg-black">
                 <Loader className="h-5 w-5 animate-spin text-muted-foreground dark:text-slate-400" />
               </div>
             </>
@@ -152,7 +152,7 @@ const ShopListDropdown = ({
             <>
               {error ? (
                 <>
-                  <div className="px-4 py-6 text-center text-sm text-destructive dark:text-red-400 bg-background dark:bg-slate-950">
+                  <div className="px-4 py-6 text-center text-sm text-destructive dark:text-red-400 bg-background dark:bg-black">
                     Failed to load shops
                   </div>
                 </>

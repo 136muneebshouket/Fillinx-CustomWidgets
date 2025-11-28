@@ -477,10 +477,10 @@ export const useCustomBlockState = () => {
 
     // updateBlock(selectedBlockId, { height, generated_html });
     const blockToSave = blockData;
-    
-    const dataJS = tsToJs(blockToSave.data || "");
-    const translationsJS = tsToJs(blockToSave.translations || "");
-    const schemaJS = tsToJs(blockToSave.schema || "");
+
+    const dataJS = tsToJs(blockToSave.data || "", true);
+    const translationsJS = tsToJs(blockToSave.translations || "", true);
+    const schemaJS = tsToJs(blockToSave.schema || "", true);
     // Send update to API
     try {
       await updateApi({
@@ -514,9 +514,9 @@ export const useCustomBlockState = () => {
 
   const handleCreateBlock = async (blockData: Partial<CustomBlockType>) => {
     try {
-      const dataJS = tsToJs(blockData.data || "");
-      const translationsJS = tsToJs(blockData.translations || "");
-      const schemaJS = tsToJs(blockData.schema || "");
+      const dataJS = tsToJs(blockData.data || "", true);
+      const translationsJS = tsToJs(blockData.translations || "", true);
+      const schemaJS = tsToJs(blockData.schema || "", true);
 
       const response = await postApi({
         url: ApiPaths.customBlocks.create(),
