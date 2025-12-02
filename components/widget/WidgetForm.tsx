@@ -16,6 +16,7 @@ import {
   X,
   Edit,
   MoreVertical,
+  LayoutPanelTop,
 } from "lucide-react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -96,7 +97,7 @@ const shops = [
 type WidgetFormProps = {
   defaults?: any;
   editMode?: boolean;
-  isTemplateWidget? : boolean;
+  isTemplateWidget?: boolean;
 };
 
 // CHANGE: function signature to accept props
@@ -294,14 +295,14 @@ export default function WidgetForm({
       schema,
     });
 
-    // console.log(generated_html)
+    // console.log(translations)
 
     // const dataJS = tsToJs(data || "", true);
     // const translationsJS = tsToJs(translations || "", true);
     // const schemaJS = tsToJs(schema || "", true);
 
     // console.log(dataJS)
-    // console.log(translationsJS)
+    // console.log(translationsJS);
     // console.log(schemaJS)
 
     // console.log({
@@ -347,7 +348,7 @@ export default function WidgetForm({
         shops: selectedShops,
         status: tempStatus,
         created_at: editMode ? defaults?.created_at : new Date(),
-        isTemplateWidget : isTemplateWidget
+        isTemplateWidget: isTemplateWidget,
       };
 
       if (!editMode) {
@@ -675,6 +676,13 @@ export default function WidgetForm({
                         )} */}
                     </div>
                   </div>
+                  {isTemplateWidget ? (
+                    <div className="flex items-center text-blue-400 text-sm gap-2">
+                      <LayoutPanelTop />
+                      <p>Remember you are creating a Template widget</p>
+                    </div>
+                  ) : null}
+
                   <div className="flex items-center gap-2">
                     {/* Shop Type Selector */}
                     <select
@@ -820,8 +828,11 @@ export default function WidgetForm({
               </div>
 
               {/* Editor Content */}
-              <div className="flex-1 overflow-hidden min-h-0 border-2 border-muted-foreground/20 rounded-md m-4">
-                {activeTab === "html" && (
+              <div className="relative flex-1 overflow-hidden min-h-0 border-2 border-muted-foreground/20 rounded-md m-4">
+                <div
+                  style={{ display: activeTab === "html" ? "block" : "none" }}
+                  className="absolute inset-0"
+                >
                   <MonacoEditor
                     className="h-full"
                     height="100%"
@@ -835,10 +846,19 @@ export default function WidgetForm({
                       fontSize: 14,
                       padding: { top: 16 },
                       scrollBeyondLastLine: false,
+                      wordWrap: "off",
+                      formatOnType: false,
+                      formatOnPaste: false,
                     }}
                   />
-                )}
-                {activeTab === "css" && (
+                </div>
+                {/* {activeTab === "html" && (
+                
+                )} */}
+                <div
+                  style={{ display: activeTab === "css" ? "block" : "none" }}
+                  className="absolute inset-0"
+                >
                   <MonacoEditor
                     className="h-full"
                     height="100%"
@@ -852,10 +872,19 @@ export default function WidgetForm({
                       fontSize: 14,
                       padding: { top: 16 },
                       scrollBeyondLastLine: false,
+                      wordWrap: "off",
+                      formatOnType: false,
+                      formatOnPaste: false,
                     }}
                   />
-                )}
-                {activeTab === "js" && (
+                </div>
+                {/* {activeTab === "css" && (
+                 
+                )} */}
+                <div
+                  style={{ display: activeTab === "js" ? "block" : "none" }}
+                  className="absolute inset-0"
+                >
                   <MonacoEditor
                     className="h-full"
                     height="100%"
@@ -869,10 +898,19 @@ export default function WidgetForm({
                       fontSize: 14,
                       padding: { top: 16 },
                       scrollBeyondLastLine: false,
+                      wordWrap: "off",
+                      formatOnType: false,
+                      formatOnPaste: false,
                     }}
                   />
-                )}
-                {activeTab === "head" && (
+                </div>
+                {/* {activeTab === "js" && (
+                 
+                )} */}
+                <div
+                  style={{ display: activeTab === "head" ? "block" : "none" }}
+                  className="absolute inset-0"
+                >
                   <MonacoEditor
                     className="h-full"
                     height="100%"
@@ -886,10 +924,19 @@ export default function WidgetForm({
                       fontSize: 14,
                       padding: { top: 16 },
                       scrollBeyondLastLine: false,
+                      wordWrap: "off",
+                      formatOnType: false,
+                      formatOnPaste: false,
                     }}
                   />
-                )}
-                {activeTab === "data" && (
+                </div>
+                {/* {activeTab === "head" && (
+                
+                )} */}
+                <div
+                  style={{ display: activeTab === "data" ? "block" : "none" }}
+                  className="absolute inset-0"
+                >
                   <MonacoEditor
                     className="h-full"
                     height="100%"
@@ -903,10 +950,21 @@ export default function WidgetForm({
                       fontSize: 14,
                       padding: { top: 16 },
                       scrollBeyondLastLine: false,
+                      wordWrap: "off",
+                      formatOnType: false,
+                      formatOnPaste: false,
                     }}
                   />
-                )}
-                {activeTab === "translations" && (
+                </div>
+                {/* {activeTab === "data" && (
+                
+                )} */}
+                <div
+                  style={{
+                    display: activeTab === "translations" ? "block" : "none",
+                  }}
+                  className="absolute inset-0"
+                >
                   <MonacoEditor
                     className="h-full"
                     height="100%"
@@ -920,10 +978,19 @@ export default function WidgetForm({
                       fontSize: 14,
                       padding: { top: 16 },
                       scrollBeyondLastLine: false,
+                      wordWrap: "off",
+                      formatOnType: false,
+                      formatOnPaste: false,
                     }}
                   />
-                )}
-                {activeTab === "schema" && (
+                </div>
+                {/* {activeTab === "translations" && (
+                 
+                )} */}
+                <div
+                  style={{ display: activeTab === "schema" ? "block" : "none" }}
+                  className="absolute inset-0"
+                >
                   <MonacoEditor
                     className="h-full"
                     height="100%"
@@ -937,9 +1004,13 @@ export default function WidgetForm({
                       fontSize: 14,
                       padding: { top: 16 },
                       scrollBeyondLastLine: false,
+                      wordWrap: "off",
+                      formatOnType: false,
+                      formatOnPaste: false,
                     }}
                   />
-                )}
+                </div>
+                
               </div>
             </div>
           </ResizablePanel>

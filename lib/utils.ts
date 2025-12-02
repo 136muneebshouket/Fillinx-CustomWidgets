@@ -20,12 +20,15 @@ function transpileTS(tsCode: string) {
 
 export function jsToJson(jsCode: string) {
   try {
+    // var translationsData;
+    // translationsData is now a pure JS object
+
     const cleaned = jsCode
       // remove variable declaration
       .replace(/^(const|let|var)\s+[a-zA-Z0-9_$]+\s*=\s*/, "")
       // remove trailing semicolon + whitespace
       .replace(/;\s*$/, "");
-      // console.log(cleaned)
+    // console.log(cleaned)
     const evalForm = eval("(" + cleaned + ")");
     // console.log(evalForm)
     return JSON.stringify(evalForm);
