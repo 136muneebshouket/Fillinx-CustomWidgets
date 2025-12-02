@@ -504,6 +504,7 @@ export const useCustomBlockState = () => {
           shops: blockToSave.shops || [],
           status: blockToSave.status,
           created_at: blockToSave?.created_at,
+          isTemplateWidget : blockToSave.isTemplateWidget
         },
       });
     } catch (error) {
@@ -540,6 +541,7 @@ export const useCustomBlockState = () => {
           schema_js: schemaJS,
           status: blockData.status ?? true,
           created_at: blockData?.created_at || new Date(),
+          isTemplateWidget : blockData.isTemplateWidget
         },
       });
       return response;

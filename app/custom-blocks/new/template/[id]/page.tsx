@@ -79,9 +79,9 @@ const page = async ({ params }: { params: any }) => {
     status: widgetData.status ?? true,
     created_at: widgetData?.created_at || null,
     configuration: widgetData?.configuration,
-    isTemplateWidget: widgetData?.isTemplateWidget,
     pin: widgetData?.pin,
     favourite: widgetData?.favourite,
+    isTemplateWidget: false,
   };
 
   return (
@@ -89,7 +89,7 @@ const page = async ({ params }: { params: any }) => {
       {widgetData ? (
         <>
           {" "}
-          <WidgetForm defaults={RefinedWidget} editMode={true} />
+          <WidgetForm defaults={RefinedWidget} editMode={false} />
         </>
       ) : null}
     </>

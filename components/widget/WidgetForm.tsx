@@ -23,6 +23,7 @@ import dynamic from "next/dynamic";
 import {
   useGenerateCustomBlockPreview,
   useCustomBlockState,
+  useDeleteCustomBlock,
 } from "@/lib/hooks/use-custom-blocks-state";
 import { defaultCustomBlockItem } from "@/lib/recoil/custom-blocks-state";
 import { toast } from "sonner";
@@ -71,6 +72,8 @@ import ShopListDropdown from "./childComponents/ShopListDropdown";
 import { Checkbox } from "@/components/ui/checkbox";
 import useUnsavedChanges from "@/hooks/unSavedChanges";
 import { useSafeNavigation } from "@/hooks/safeNavigation";
+import { useSWRConfig } from "swr";
+import { SWRKeys } from "@/lib/api/swr-keys";
 
 type EditorTab =
   | "html"
@@ -93,18 +96,23 @@ const shops = [
 type WidgetFormProps = {
   defaults?: any;
   editMode?: boolean;
+  isTemplateWidget? : boolean;
 };
 
 // CHANGE: function signature to accept props
 export default function WidgetForm({
   defaults,
   editMode = false,
+  isTemplateWidget = false,
 }: WidgetFormProps) {
   const router = useRouter();
   const editorRef = useRef<any>(null);
   const monacoRef = useRef<any>(null);
+
+  const { mutate } = useSWRConfig();
   const { generatePreview } = useGenerateCustomBlockPreview();
   const { handleCreateBlock, handleSaveBlocks } = useCustomBlockState();
+  const { handleDeleteBlock } = useDeleteCustomBlock();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const [saved, setSaved] = useState(true);
@@ -286,6 +294,16 @@ export default function WidgetForm({
       schema,
     });
 
+    // console.log(generated_html)
+
+    // const dataJS = tsToJs(data || "", true);
+    // const translationsJS = tsToJs(translations || "", true);
+    // const schemaJS = tsToJs(schema || "", true);
+
+    // console.log(dataJS)
+    // console.log(translationsJS)
+    // console.log(schemaJS)
+
     // console.log({
     //   title: blockTitle,
     //   html,
@@ -329,6 +347,7 @@ export default function WidgetForm({
         shops: selectedShops,
         status: tempStatus,
         created_at: editMode ? defaults?.created_at : new Date(),
+        isTemplateWidget : isTemplateWidget
       };
 
       if (!editMode) {
@@ -541,6 +560,34 @@ export default function WidgetForm({
     [handleEditorDidMount]
   );
 
+  // delete block
+  const handleDeleteWidget = async (widget: any) => {
+    if (window.confirm("Do you really want to delete this widget ??")) {
+      try {
+        // const response = await delete_api_template({
+        //   url: TapdayApiPaths?.customWidgets.deleteById(widget?.id),
+        // });
+        // setdeletingBlock(true);
+        // Navigate first to prevent rendering with undefined block
+        // router.push('/');
+        await handleDeleteBlock(widget.id);
+        // router.refresh();
+        // await refetchWidgets();
+        mutate(SWRKeys.customBlocks.list);
+        toast.success("widget deleted successfully", {
+          position: "top-right",
+        });
+        router.push("/");
+      } catch (error) {
+        toast.error("Something went wrong, try again later", {
+          position: "top-right",
+        });
+      } finally {
+        // setdeletingBlock(false);
+      }
+    }
+  };
+
   //   console.log(selectedShops)
 
   return (
@@ -574,7 +621,7 @@ export default function WidgetForm({
       </header>
 
       {/* Main Content - Split View */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 h-full overflow-hidden">
         <ResizablePanelGroup direction="horizontal">
           {/* Left Panel - Editor */}
           <ResizablePanel defaultSize={70} className="h-full">
@@ -698,9 +745,16 @@ export default function WidgetForm({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem variant="destructive">
-                          Delete Block
-                        </DropdownMenuItem>
+                        {editMode && (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              handleDeleteWidget(defaults);
+                            }}
+                            variant="destructive"
+                          >
+                            Delete Block
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>

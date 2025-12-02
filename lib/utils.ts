@@ -25,7 +25,9 @@ export function jsToJson(jsCode: string) {
       .replace(/^(const|let|var)\s+[a-zA-Z0-9_$]+\s*=\s*/, "")
       // remove trailing semicolon + whitespace
       .replace(/;\s*$/, "");
+      // console.log(cleaned)
     const evalForm = eval("(" + cleaned + ")");
+    // console.log(evalForm)
     return JSON.stringify(evalForm);
   } catch (error: any) {
     throw new Error("Error converting js to json" + error?.message);

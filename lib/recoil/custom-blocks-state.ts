@@ -4,6 +4,7 @@ export interface CustomBlockType {
   id: string;
   title: string;
   description: string;
+  type?:string;
   html: string;
   css: string;
   js: string;
@@ -17,6 +18,10 @@ export interface CustomBlockType {
   shops?: Array<{ id: string; name: string }>;
   status: boolean;
   created_at?: any;
+  isTemplateWidget? : boolean;
+  configuration? : any;
+  pin? : boolean;
+  favourite? : boolean;
 }
 
 export interface CustomBlockStore {
