@@ -68,13 +68,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn, jsToJson, tsToJs } from "@/lib/utils";
+import { cn, jsToJson, tsToJs, debounce } from "@/lib/utils";
 import ShopListDropdown from "./childComponents/ShopListDropdown";
 import { Checkbox } from "@/components/ui/checkbox";
 import useUnsavedChanges from "@/hooks/unSavedChanges";
 import { useSafeNavigation } from "@/hooks/safeNavigation";
+import { useDebouncedChange } from "@/hooks/use-debounced-change";
 import { useSWRConfig } from "swr";
 import { SWRKeys } from "@/lib/api/swr-keys";
+import { OnMount } from "@monaco-editor/react";
 
 type EditorTab =
   | "html"
@@ -138,29 +140,31 @@ export default function WidgetForm({
 
   // Editor content state
   // CHANGE: initialize from defaults when provided, else fallback to current defaults
-  const [html, setHtml] = useState(
-    defaults?.html ?? defaultCustomBlockItem.html
-  );
-  const [css, setCss] = useState(defaults?.css ?? defaultCustomBlockItem.css);
-  const [js, setJs] = useState(defaults?.js ?? defaultCustomBlockItem.js);
-  const [head, setHead] = useState(
-    defaults?.head ?? defaultCustomBlockItem.head
-  );
-  const [data, setData] = useState(
-    defaults?.data ?? defaultCustomBlockItem.data
-  );
-  const [translations, setTranslations] = useState(
-    defaults?.translations ?? defaultCustomBlockItem.translations
-  );
-  const [schema, setSchema] = useState(
-    defaults?.schema ?? defaultCustomBlockItem.schema
-  );
+  const [editorState, setEditorState] = useState({
+    html: defaults?.html ?? defaultCustomBlockItem.html,
+    css: defaults?.css ?? defaultCustomBlockItem.css,
+    js: defaults?.js ?? defaultCustomBlockItem.js,
+    head: defaults?.head ?? defaultCustomBlockItem.head,
+    data: defaults?.data ?? defaultCustomBlockItem.data,
+    translations: defaults?.translations ?? defaultCustomBlockItem.translations,
+    schema: defaults?.schema ?? defaultCustomBlockItem.schema,
+  });
+  // let localEditorState : any = editorState
   const [shopType, setShopType] = useState<"global" | "shop">(
     defaults?.shopType ?? "global"
   );
   const [selectedShops, setSelectedShops] = useState<typeof shops>(
     defaults?.shops ?? []
   );
+
+  // Debounced handlers for editor changes to prevent stuttering/jumping
+
+  // const handleEditorChange = useDebouncedChange((value: any, key: string) =>
+  //   setEditorState((prev) => ({ ...prev, [key]: value }))
+  // );
+  const handleEditorChange = (value: any, key: string) => {
+    setEditorState((prev) => ({ ...prev, [key]: value }));
+  };
 
   // Temp state for dialog
   const [tempTitle, setTempTitle] = useState(blockTitle);
@@ -187,12 +191,12 @@ export default function WidgetForm({
 
   useEffect(() => {
     const isDirty =
-      defaults.html != html ||
-      defaults.css != css ||
-      defaults.js != js ||
-      defaults.data != data ||
-      defaults.translations != translations ||
-      defaults.schema != schema ||
+      defaults.html != editorState.html ||
+      defaults.css != editorState.css ||
+      defaults.js != editorState.js ||
+      defaults.data != editorState.data ||
+      defaults.translations != editorState.translations ||
+      defaults.schema != editorState.schema ||
       defaults.shopType != shopType ||
       defaults.title != blockTitle ||
       defaults.status != blockStatus ||
@@ -202,12 +206,12 @@ export default function WidgetForm({
     setSaved(!isDirty);
   }, [
     defaults,
-    html,
-    css,
-    js,
-    data,
-    translations,
-    schema,
+    editorState.html,
+    editorState.css,
+    editorState.js,
+    editorState.data,
+    editorState.translations,
+    editorState.schema,
     shopType,
     selectedShops,
     blockTitle,
@@ -285,15 +289,7 @@ export default function WidgetForm({
     const bodyHeight =
       iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
 
-    const generated_html = generatePreview({
-      html,
-      css,
-      js,
-      head,
-      data,
-      translations,
-      schema,
-    });
+    const generated_html = generatePreview(editorState);
 
     // console.log(translations)
 
@@ -306,14 +302,8 @@ export default function WidgetForm({
     // console.log(schemaJS)
 
     // console.log({
+    //   ...editorState,
     //   title: blockTitle,
-    //   html,
-    //   css,
-    //   js,
-    //   head,
-    //   data,
-    //   translations,
-    //   schema,
     //   generated_html,
     //   height: bodyHeight,
     //   shopType,
@@ -333,15 +323,9 @@ export default function WidgetForm({
       setSaving(true);
 
       const bodyData = {
+        ...editorState,
         title: tempTitle,
         description: tempDescription,
-        html,
-        css,
-        js,
-        head,
-        data,
-        translations,
-        schema,
         generated_html,
         height: bodyHeight,
         shopType,
@@ -375,15 +359,7 @@ export default function WidgetForm({
     }
   };
 
-  const previewHtml = generatePreview({
-    html,
-    css,
-    js,
-    head,
-    data,
-    translations,
-    schema,
-  });
+  const previewHtml = generatePreview(editorState);
 
   //   console.log(iframeHeight);
   const handleSaveRef = useRef(handleSave);
@@ -831,15 +807,17 @@ export default function WidgetForm({
               <div className="relative flex-1 overflow-hidden min-h-0 border-2 border-muted-foreground/20 rounded-md m-4">
                 <div
                   style={{ display: activeTab === "html" ? "block" : "none" }}
-                  className="absolute inset-0"
+                  className="absolute h-full inset-0"
                 >
                   <MonacoEditor
                     className="h-full"
                     height="100%"
                     language="html"
                     theme={theme === "dark" ? "vs-dark" : "light"}
-                    value={html}
-                    onChange={(value) => setHtml(value || "")}
+                    defaultValue={editorState.html}
+                    onChange={(value) => {
+                      handleEditorChange(value, "html");
+                    }}
                     onMount={readonlyLinesHandler(0, 0)}
                     options={{
                       minimap: { enabled: false },
@@ -864,8 +842,10 @@ export default function WidgetForm({
                     height="100%"
                     language="css"
                     theme={theme === "dark" ? "vs-dark" : "light"}
-                    value={css}
-                    onChange={(value) => setCss(value || "")}
+                    defaultValue={editorState.css}
+                    onChange={(value) => {
+                      handleEditorChange(value, "css");
+                    }}
                     onMount={readonlyLinesHandler(0, 0)}
                     options={{
                       minimap: { enabled: false },
@@ -890,8 +870,10 @@ export default function WidgetForm({
                     height="100%"
                     language="javascript"
                     theme={theme === "dark" ? "vs-dark" : "light"}
-                    value={js}
-                    onChange={(value) => setJs(value || "")}
+                    defaultValue={editorState.js}
+                    onChange={(value) => {
+                      handleEditorChange(value, "js");
+                    }}
                     onMount={readonlyLinesHandler(0, 0)}
                     options={{
                       minimap: { enabled: false },
@@ -916,8 +898,10 @@ export default function WidgetForm({
                     height="100%"
                     language="html"
                     theme={theme === "dark" ? "vs-dark" : "light"}
-                    value={head}
-                    onChange={(value) => setHead(value || "")}
+                    defaultValue={editorState.head}
+                    onChange={(value) => {
+                      handleEditorChange(value, "head");
+                    }}
                     onMount={readonlyLinesHandler(0, 0)}
                     options={{
                       minimap: { enabled: false },
@@ -941,10 +925,12 @@ export default function WidgetForm({
                     className="h-full"
                     height="100%"
                     language="typescript"
-                    onChange={(value) => setData(value || "")}
+                    defaultValue={editorState.data}
+                    onChange={(value) => {
+                      handleEditorChange(value, "data");
+                    }}
                     onMount={readonlyLinesHandler(1, 11)}
                     theme={theme === "dark" ? "vs-dark" : "light"}
-                    value={data}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
@@ -969,10 +955,12 @@ export default function WidgetForm({
                     className="h-full"
                     height="100%"
                     language="typescript"
-                    onChange={(value) => setTranslations(value || "")}
+                    defaultValue={editorState.translations}
+                    onChange={(value) => {
+                      handleEditorChange(value, "translations");
+                    }}
                     onMount={readonlyLinesHandler(1, 10)}
                     theme={theme === "dark" ? "vs-dark" : "light"}
-                    value={translations}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
@@ -995,10 +983,12 @@ export default function WidgetForm({
                     className="h-full"
                     height="100%"
                     language="typescript"
-                    onChange={(value) => setSchema(value || "")}
+                    defaultValue={editorState.schema}
+                    onChange={(value) => {
+                      handleEditorChange(value, "schema");
+                    }}
                     onMount={readonlyLinesHandler(1, 12)}
                     theme={theme === "dark" ? "vs-dark" : "light"}
-                    value={schema}
                     options={{
                       minimap: { enabled: false },
                       fontSize: 14,
@@ -1010,7 +1000,6 @@ export default function WidgetForm({
                     }}
                   />
                 </div>
-                
               </div>
             </div>
           </ResizablePanel>
