@@ -36,6 +36,7 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import CustomBlockModal from "@/components/widget/CustomBlockModal";
 import BlocksView from "@/components/widget/BlocksView";
+import Image from "next/image";
 
 export default function Home() {
   const router = useRouter();
@@ -77,14 +78,18 @@ export default function Home() {
           <div className="flex items-center gap-5">
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded bg-foreground flex items-center justify-center">
-                <span className="text-background font-semibold text-xs">
+                {/* <span className="text-background font-semibold text-xs">
                   TB
-                </span>
+                </span> */}
+                <Image src={'/custom-favicon.svg'} width={20} height={20} alt="svg"/>
               </div>
               <h1 className="text-base font-medium">Custom Blocks</h1>
             </div>
-            <p onClick={()=>setShowTemplateBlocks(!showTemplateBlocks)} className={"text-sm text-muted-foreground cursor-pointer"}>
-              {showTemplateBlocks ? "Custom Blocks" : "Template Blocks"}
+            <p onClick={()=>setShowTemplateBlocks(false)} className={"text-sm text-muted-foreground cursor-pointer" + " " + (showTemplateBlocks ? "" : "text-white")}>
+              {"Custom Blocks"}
+            </p>
+            <p onClick={()=>setShowTemplateBlocks(true)} className={"text-sm text-muted-foreground cursor-pointer" + " " + (showTemplateBlocks ? "text-white" : "")}>
+              {"Template Blocks"}
             </p>
           </div>
 

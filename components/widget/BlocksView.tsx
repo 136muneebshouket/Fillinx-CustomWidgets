@@ -146,20 +146,23 @@ const BlocksView = ({ templateBlocks = false }: BlocksViewProps) => {
             {blocks.map((block: any) => (
               <Card key={block.id} className="overflow-hidden group p-0 gap-0">
                 {/* Preview Area */}
-                <div className="aspect-video bg-muted flex items-center justify-center border-b overflow-hidden">
-                  {block.generated_html ? (
-                    <iframe
-                      srcDoc={block.generated_html}
-                      title={`Preview ${block.id}`}
-                      className="w-full h-full border-0"
-                      sandbox="allow-scripts"
-                    />
-                  ) : (
-                    <p className="text-sm text-muted-foreground text-center p-4">
-                      {block.title}
-                    </p>
-                  )}
-                </div>
+                <Link href={`/widget/edit/${block.id}`}>
+                  <div className="relative aspect-video bg-muted flex items-center justify-center border-b overflow-hidden ">
+                    <div className="absolute left-0 top-0 h-full w-full z-10 bg-transparent cursor-pointer"></div>
+                    {block.generated_html ? (
+                      <iframe
+                        srcDoc={block.generated_html}
+                        title={`Preview ${block.id}`}
+                        className="w-full h-full border-0 cursor-pointer"
+                        sandbox="allow-scripts"
+                      />
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center p-4">
+                        {block.title}
+                      </p>
+                    )}
+                  </div>
+                </Link>
 
                 {/* Card Footer */}
                 <div className="p-3 flex items-center justify-between">
@@ -225,20 +228,23 @@ const BlocksView = ({ templateBlocks = false }: BlocksViewProps) => {
               <Card key={block.id} className="overflow-hidden p-0 gap-0">
                 <div className="p-4 flex items-center gap-4">
                   {/* Preview Thumbnail */}
-                  <div className="w-40 h-24 bg-muted rounded flex items-center justify-center shrink-0 overflow-hidden">
-                    {block.generated_html ? (
-                      <iframe
-                        srcDoc={block.generated_html}
-                        title={`Preview ${block.id}`}
-                        className="w-full h-full border-0"
-                        sandbox="allow-scripts"
-                      />
-                    ) : (
-                      <p className="text-xs text-muted-foreground text-center px-2">
-                        {block.title}
-                      </p>
-                    )}
-                  </div>
+                  <Link href={`/widget/edit/${block.id}`}>
+                    <div className="relative w-40 h-24 bg-muted rounded flex items-center justify-center shrink-0 overflow-hidden">
+                      <div className="absolute left-0 top-0 h-full w-full z-10 bg-transparent cursor-pointer"></div>
+                      {block.generated_html ? (
+                        <iframe
+                          srcDoc={block.generated_html}
+                          title={`Preview ${block.id}`}
+                          className="w-full h-full border-0"
+                          sandbox="allow-scripts"
+                        />
+                      ) : (
+                        <p className="text-xs text-muted-foreground text-center px-2">
+                          {block.title}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
 
                   {/* Block Info */}
                   <div className="flex-1 min-w-0">
