@@ -63,6 +63,9 @@ const page = async ({ params }: { params: { id: string } }) => {
   //   console.log(widgetData?.height);
 
   return (
+    <div className="h-screen w-screen">
+
+ 
     <iframe
       title="Widget Content Preview"
       // ref={iframeRef}
@@ -72,11 +75,13 @@ const page = async ({ params }: { params: { id: string } }) => {
       // Use the dynamic height state
       style={{
         height: widgetData?.height ? widgetData?.height + "px" : "100%",
+        width:"inherit"
       }}
       frameBorder="0"
       // Removed scrolling="no" to allow content to scroll if calculation is insufficient
       // className="rounded-md bg-white transition-all duration-300"
     />
+       </div>
   );
 };
 
