@@ -293,9 +293,9 @@ export default function WidgetForm({
 
     // console.log(translations)
 
-    // const dataJS = tsToJs(data || "", true);
-    // const translationsJS = tsToJs(translations || "", true);
-    // const schemaJS = tsToJs(schema || "", true);
+    // const dataJS = tsToJs(editorState.data || "", true);
+    // const translationsJS = tsToJs(editorState.translations || "", true);
+    // const schemaJS = tsToJs(editorState.schema || "", true);
 
     // console.log(dataJS)
     // console.log(translationsJS);

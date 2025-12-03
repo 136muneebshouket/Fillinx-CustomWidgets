@@ -18,20 +18,37 @@ function transpileTS(tsCode: string) {
   return result.outputText;
 }
 
+function extractFirstVariableValue(code: string) {
+  // Match: let/const/var variableName = <value>;
+  const match = code.match(/(let|const|var)\s+(\w+)\s*=\s*([^;]+);/);
+
+  if (!match) return null;
+
+  const varName = match[2];
+  const varValueCode = match[3];
+
+  // Safely evaluate the value only
+  const value = Function(`"use strict"; return (${varValueCode});`)();
+
+  return { name: varName, value };
+}
+
 export function jsToJson(jsCode: string) {
   try {
+    // console.log(jsCode);
     // var translationsData;
     // translationsData is now a pure JS object
 
-    const cleaned = jsCode
-      // remove variable declaration
-      .replace(/^(const|let|var)\s+[a-zA-Z0-9_$]+\s*=\s*/, "")
-      // remove trailing semicolon + whitespace
-      .replace(/;\s*$/, "");
-    // console.log(cleaned)
-    const evalForm = eval("(" + cleaned + ")");
+    // const cleaned = jsCode
+    //   // remove variable declaration
+    //   .replace(/^(const|let|var)\s+[a-zA-Z0-9_$]+\s*=\s*/, "")
+    //   // remove trailing semicolon + whitespace
+    //   .replace(/;\s*$/, "");
+    const cleaned = extractFirstVariableValue(jsCode);
+    // console.log(cleaned);
+    // const evalForm = eval("(" + cleaned + ")");
     // console.log(evalForm)
-    return JSON.stringify(evalForm);
+    return JSON.stringify(cleaned?.value);
   } catch (error: any) {
     throw new Error("Error converting js to json" + error?.message);
   }
@@ -58,4 +75,4 @@ export function debounce<T extends (...args: any[]) => any>(
       func(...args);
     }, wait);
   };
-}
+}
