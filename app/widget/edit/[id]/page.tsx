@@ -84,12 +84,14 @@ const page = async ({ params }: { params: any }) => {
     favourite: widgetData?.favourite,
   };
 
+  // console.log(RefinedWidget)
+
   return (
     <>
       {widgetData ? (
         <>
           {" "}
-          <WidgetForm defaults={RefinedWidget} editMode={true} />
+          <WidgetForm defaults={RefinedWidget} editMode={true} isTemplateWidget={RefinedWidget?.isTemplateWidget}/>
         </>
       ) : null}
     </>

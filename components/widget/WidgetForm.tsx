@@ -662,8 +662,10 @@ export default function WidgetForm({
                   <div className="flex items-center gap-2">
                     {/* Shop Type Selector */}
                     <select
+                      style={{ display: isTemplateWidget ? "none" : "block" }}
                       className="px-2 py-1 text-xs border rounded-md bg-background w-20 h-7"
                       value={shopType}
+                      disabled={isTemplateWidget || false}
                       onChange={(e) => {
                         setShopType(e.target.value as "global" | "shop");
                         if (e.target.value === "global") {
