@@ -285,7 +285,7 @@ export default function WidgetForm({
 
   // const dataJS = tsToJs(data || "");
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     const bodyHeight =
       iframeRef.current?.contentWindow?.document.body.scrollHeight ?? 0;
 
@@ -357,7 +357,21 @@ export default function WidgetForm({
     } finally {
       setSaving(false);
     }
-  };
+  }, [
+    editorState,
+    saving,
+    tempTitle,
+    tempDescription,
+    shopType,
+    selectedShops,
+    tempStatus,
+    editMode,
+    defaults,
+    isTemplateWidget,
+    handleCreateBlock,
+    handleSaveBlocks,
+    router,
+  ]);
 
   const previewHtml = generatePreview(editorState);
 
@@ -410,7 +424,7 @@ export default function WidgetForm({
       window.removeEventListener("message", listenToIframeMessages);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleSave, saving]);
+  }, [handleSave, saving, handleKeyDown]);
 
   const SCHEMA_OBJECT = `{
     settingType: "",

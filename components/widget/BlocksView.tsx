@@ -107,6 +107,9 @@ const BlocksView = ({ templateBlocks = false }: BlocksViewProps) => {
   const editWidget = (widget: any) => {
     router.push(`/widget/edit/${widget?.id}`);
   };
+  const serverView = (widget: any) => {
+    router.push(`/widget/server/${widget?.id}`);
+  };
   return (
     <>
       <div>
@@ -207,7 +210,13 @@ const BlocksView = ({ templateBlocks = false }: BlocksViewProps) => {
                       >
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          serverView(block);
+                        }}
+                      >
+                        Server View
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
                           handleDeleteWidget(block);
@@ -287,7 +296,13 @@ const BlocksView = ({ templateBlocks = false }: BlocksViewProps) => {
                       >
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          serverView(block);
+                        }}
+                      >
+                        Server View
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
                           handleDeleteWidget(block);
