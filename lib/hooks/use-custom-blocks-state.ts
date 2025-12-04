@@ -408,7 +408,6 @@ ${css}
 <script type="text/typescript">
     
 
-   const Tapday = new TadpaySdk({})
 
     ${handleBarsLogic}
     
@@ -430,12 +429,6 @@ ${css}
       element.style[styles[i].type] = styles[i].value
     }
   }
-
-
-    var mainBodyHtml = document.getElementById("mainbody").innerHTML
-    var template = Handlebars.compile(mainBodyHtml);
-    const output= template(Tapday.data)
-    document.getElementById("mainbody").innerHTML = output
 
     ${js}
     
@@ -504,7 +497,7 @@ export const useCustomBlockState = () => {
           shops: blockToSave.shops || [],
           status: blockToSave.status,
           created_at: blockToSave?.created_at,
-          isTemplateWidget : blockToSave.isTemplateWidget
+          isTemplateWidget: blockToSave.isTemplateWidget,
         },
       });
     } catch (error) {
@@ -541,7 +534,7 @@ export const useCustomBlockState = () => {
           schema_js: schemaJS,
           status: blockData.status ?? true,
           created_at: blockData?.created_at || new Date(),
-          isTemplateWidget : blockData.isTemplateWidget
+          isTemplateWidget: blockData.isTemplateWidget,
         },
       });
       return response;

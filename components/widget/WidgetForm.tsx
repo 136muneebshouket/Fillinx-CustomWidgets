@@ -130,6 +130,8 @@ export default function WidgetForm({
   const [iframeHeight, setIframeHeight] = useState(defaults?.height ?? 300);
   const [iframeWidth, setIframeWidth] = useState(460);
 
+  // console.log(iframeHeight);
+
   // Block details
   // CHANGE: initialize from defaults when provided
   const [blockTitle, setBlockTitle] = useState(defaults?.title);
@@ -247,24 +249,27 @@ export default function WidgetForm({
   }, [theme]);
 
   // Listen to iframe messages for dynamic height
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) {
-        return;
-      }
+  // useEffect(() => {
+  //   // console.log("im running");
+  //   const handleMessage = (event: MessageEvent) => {
+  //     // console.log(event);
+  //     if (event.origin !== window.location.origin) {
+  //       return;
+  //     }
 
-      const messageData = event.data;
-      if (messageData.action === "resize" && messageData.height) {
-        setIframeHeight(Number(messageData.height));
-      }
-    };
+  //     const messageData = event.data;
+  //     // console.log(messageData);
+  //     if (messageData.action === "resize" && messageData.height) {
+  //       setIframeHeight(messageData.height);
+  //     }
+  //   };
 
-    window.addEventListener("message", handleMessage);
+  //   window.addEventListener("message", handleMessage);
 
-    return () => {
-      window.removeEventListener("message", handleMessage);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("message", handleMessage);
+  //   };
+  // }, []);
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -384,8 +389,9 @@ export default function WidgetForm({
   }, [handleSave]);
 
   const listenToIframeMessages = (event: any) => {
+    // console.log(event.data);
     // Verify the source of the message
-    console.log(event.origin, window.location.origin);
+    // console.log(event.origin, window.location.origin);
     if (event.origin !== window.location.origin) {
       // Ensure message is coming from the expected origin
       return;
@@ -399,11 +405,13 @@ export default function WidgetForm({
     if (messageData.action === "resize") {
       // alert(messageData.height)
       // Example: Resize iframe based on data
+
       if (messageData?.height) {
         setIframeHeight(Number(messageData.height));
       }
     }
   };
+
   const handleKeyDown = async (e: KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "s") {
       // handle async function
@@ -1085,7 +1093,9 @@ export default function WidgetForm({
                 <iframe
                   ref={iframeRef}
                   className="w-full border overflow-scroll"
-                  style={{ height: `${iframeHeight}px` }}
+                  style={
+                    iframeHeight ? { height: `${iframeHeight}px` } : undefined
+                  }
                   title="Preview"
                   srcDoc={previewHtml}
                   sandbox="allow-scripts allow-same-origin"
