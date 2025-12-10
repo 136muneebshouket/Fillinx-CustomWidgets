@@ -81,14 +81,33 @@ export default function Home() {
                 {/* <span className="text-background font-semibold text-xs">
                   TB
                 </span> */}
-                <Image src={'/custom-favicon.svg'} width={20} height={20} alt="svg"/>
+                <Image
+                  src={"/custom-favicon.svg"}
+                  width={20}
+                  height={20}
+                  alt="svg"
+                />
               </div>
               <h1 className="text-base font-medium">Custom Blocks</h1>
             </div>
-            <p onClick={()=>setShowTemplateBlocks(false)} className={"text-sm text-muted-foreground cursor-pointer" + " " + (showTemplateBlocks ? "" : "text-white")}>
+            <p
+              onClick={() => setShowTemplateBlocks(false)}
+              className={
+                "text-sm text-muted-foreground cursor-pointer" +
+                " " +
+                (showTemplateBlocks ? "" : "text-white")
+              }
+            >
               {"Custom Blocks"}
             </p>
-            <p onClick={()=>setShowTemplateBlocks(true)} className={"text-sm text-muted-foreground cursor-pointer" + " " + (showTemplateBlocks ? "text-white" : "")}>
+            <p
+              onClick={() => setShowTemplateBlocks(true)}
+              className={
+                "text-sm text-muted-foreground cursor-pointer" +
+                " " +
+                (showTemplateBlocks ? "text-white" : "")
+              }
+            >
               {"Template Blocks"}
             </p>
           </div>
@@ -106,6 +125,14 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="mb-2 flex gap-2">
+          <Link href="#dummylink1">
+            <Button size={"sm"}> dummylink1</Button>
+          </Link>
+          <Link href="#dummylink2">
+            <Button size={"sm"}> dummylink2</Button>
+          </Link>
+        </div>
         <div className="flex items-start justify-between mb-8">
           <div>
             <h2 className="text-3xl font-semibold mb-2">
@@ -117,7 +144,7 @@ export default function Home() {
             </p>
           </div>
           <div className="flex justify-center items-center gap-1">
-            {(showTemplateBlocks == false) ? (
+            {showTemplateBlocks == false ? (
               <Button className="gap-1.5" onClick={() => setModalOpen(true)}>
                 <Plus className="w-4 h-4" />
                 Create Custom Block
